@@ -1,0 +1,87 @@
+.controllerContainer {
+  margin-top: 12px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  min-width: 400px;
+  max-width: 400px;
+
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.playpause {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.controllerContainer.advanced {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.advancedController {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0px 5px;
+}
+
+.advancedController > * {
+  flex: 1;
+}
+
+.lefta,
+.centera,
+.righta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.lefta {
+  justify-content: start;
+}
+.righta {
+  justify-content: end;
+}
+.centera {
+  justify-content: center;
+}
+
+.onoffbtn {
+  background-color: transparent;
+  border: 0;
+  color: currentColor;
+  padding: 0 5px;
+  pointer-events: auto;
+  width: calc(20px + 10px);
+  height: 20px;
+  display: block;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.onoffbtn:not(.disabled) {
+  transform: translateY(-3px);
+}
+.onoffbtn::after {
+  background-color: currentColor;
+  bottom: 0px;
+  transform: translateY(0px) translateX(-50%);
+  transform-origin: 0 0;
+  content: "";
+  display: block;
+  height: 5px;
+  width: 5px;
+  border-radius: 5px;
+  left: 50%;
+  position: relative;
+
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.onoffbtn:not(.disabled)::after {
+  transform: translateY(-3px) translateX(-50%);
+  opacity: 1;
+}

@@ -1,0 +1,41 @@
+.nextMusic {
+  position: fixed;
+  right: 32px;
+  top: 32px;
+  color: white;
+
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  transform: translateX(16px);
+  opacity: 0;
+  user-select: none;
+}
+.nextMusic.visible {
+  transform: translateX(0px);
+  opacity: 1;
+  user-select: all;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+.upnext {
+  font-weight: bold;
+  text-align: right;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+.title {
+  text-align: right;
+  font-size: 1.1rem;
+  line-height: 1.1;
+}
+.cover {
+  height: calc(1.2rem * 1.1 * 2 + 3px);
+}

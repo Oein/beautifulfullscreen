@@ -1,0 +1,32 @@
+.progressBarContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.eslaped {
+  margin-left: 10px;
+  margin-right: 10px;
+  min-width: 40px;
+}
+
+.duration {
+  margin-left: 10px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background-color: #ffffff50;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.progressBarInner {
+  height: 100%;
+  border-radius: 6px;
+  background-color: #ffffff;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.8);
+  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
