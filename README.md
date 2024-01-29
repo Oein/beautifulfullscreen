@@ -2,6 +2,8 @@
 
 Minimal album cover art display with beautiful blur effect background. Activating button locates in top bar. While in display mode, double click anywhere to exit. Right click anywhere to open setting menu. Now also includes lyrics if `lyrics-plus` custom app installed.
 
+![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/marketplace/preview.gif)
+
 |                                                                                                  |                                                                                                  |
 | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/1.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/2.png) |
