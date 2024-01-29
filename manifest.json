@@ -4,6 +4,7 @@
     "description": "Remade version of Full App Display",
     "preview": "marketplace/preview.gif",
     "main": "marketplace/bfs-bundle.js",
-    "readme": "README.md"
+    "readme": "README.md",
+    "authors": [{ "name": "Oein", "url": "https://github.com/Oein" }]
   }
 ]
