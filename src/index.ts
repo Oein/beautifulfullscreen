@@ -1,7 +1,7 @@
 import { render } from "./ui";
 
 const main = () => {
-  render(true);
+  // render(true);
   new Spicetify.Topbar.Button(
     "Beautiful Fullscreen",
     `<svg role="img" height="16" width="16" viewBox="0 0 16 16" fill="currentColor">${Spicetify.SVGIcons.visualizer}</svg>`,

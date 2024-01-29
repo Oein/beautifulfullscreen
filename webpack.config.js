@@ -15,7 +15,7 @@ module.exports = {
   },
   output: {
     path: isProduction
-      ? path.resolve(__dirname, "dist")
+      ? path.resolve(__dirname, "marketplace")
       : path.resolve(__dirname, "..", "Extensions"),
     filename: "bfs-bundle.js", // <--- Will be compiled to this single file
   },

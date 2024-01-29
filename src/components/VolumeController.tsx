@@ -13,7 +13,7 @@ export default function VolumeController(props: { enabled: boolean }) {
     const y = e.clientY - rect.top;
     const height = (e.currentTarget as HTMLDivElement).clientHeight;
     const volume = 1 - y / height;
-    console.log(y, height);
+    // console.log(y, height);
     Spicetify.Player.setVolume(volume);
     setVolume(volume);
     if (volume === 0) setIsMuted(true);

@@ -103,7 +103,7 @@ export default function BackgroundCanvas(props: { imgURL: string }) {
   };
 
   useEffect(() => {
-    console.log("props.imgURL", props.imgURL);
+    // console.log("props.imgURL", props.imgURL);
     renderCanvas(props.imgURL);
     lastURL.current = props.imgURL;
   }, [props.imgURL]);

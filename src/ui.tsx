@@ -17,6 +17,7 @@ function Foreground(props: {
   title: string;
   artist: string;
   coverURL: string;
+  visible: boolean;
 }) {
   const { React } = Spicetify;
   const { useRef, useEffect } = React;
@@ -33,12 +34,20 @@ function Foreground(props: {
     CONFIG.get<boolean>("enableVolumeController") || false
   );
 
+  const refz = useRef(false);
+  Spicetify.Platform.History.listen((location: Location) => {
+    if (refz.current) {
+      refz.current = false;
+      return;
+    }
+    lastApp.current = location.pathname;
+  });
+
   function requestLyricsPlus() {
-    lastApp.current = Spicetify.Platform.History.location.pathname;
     if (lastApp.current !== "/lyrics-plus") {
+      refz.current = true;
       Spicetify.Platform.History.push("/lyrics-plus");
     }
-    window.dispatchEvent(new Event("fad-request"));
   }
 
   const upv = () => {
@@ -59,6 +68,13 @@ function Foreground(props: {
   useEffect(() => {
     if (showLyrics) requestLyricsPlus();
   }, [showLyrics]);
+
+  useEffect(() => {
+    if (!props.visible) {
+      // console.log("lastApp", lastApp.current);
+      Spicetify.Platform.History.push(lastApp.current);
+    }
+  }, [props.visible]);
 
   return (
     <div className={style.foreground}>
@@ -162,7 +178,7 @@ function UI(props: { visible: boolean }) {
     }
     setArtist(artistName);
 
-    console.log("meta", meta);
+    // console.log("meta", meta);
     setCoverURL(meta.image_xlarge_url);
   };
 
@@ -189,7 +205,7 @@ function UI(props: { visible: boolean }) {
 
   return (
     <div
-      className={style.container + " " + (visible ? "" : style.hidden)}
+      className={style.container + " " + (visible ? style.visible : "")}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -202,7 +218,12 @@ function UI(props: { visible: boolean }) {
       <BackgroundCanvas imgURL={coverURL} />
       <VolumeController enabled={volumeController} />
       <NextMusic />
-      <Foreground title={title} artist={artist} coverURL={coverURL} />
+      <Foreground
+        title={title}
+        artist={artist}
+        coverURL={coverURL}
+        visible={visible}
+      />
     </div>
   );
 }
