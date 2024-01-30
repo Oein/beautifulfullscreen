@@ -3,16 +3,21 @@ import style from "./VolumeController.module.css";
 
 export default function VolumeController(props: { enabled: boolean }) {
   const { React } = Spicetify;
-  const { useState, useEffect } = React;
+  const { useState, useEffect, useRef } = React;
   const [volume, setVolume] = useState(Spicetify.Player.getVolume());
   const [isMuted, setIsMuted] = useState(Spicetify.Player.getMute());
+  const mouseDown = useRef(false);
+
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const onClick = (e: MouseEvent) => {
-    if (e.currentTarget == null) return;
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    if (sliderRef.current == null) return;
+    const rect = sliderRef.current.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const height = (e.currentTarget as HTMLDivElement).clientHeight;
-    const volume = 1 - y / height;
+    const height = sliderRef.current.clientHeight;
+    let volume = 1 - y / height;
+    if (volume > 1) volume = 1;
+    if (volume < 0) volume = 0;
     // console.log(y, height);
     Spicetify.Player.setVolume(volume);
     setVolume(volume);
@@ -26,6 +31,21 @@ export default function VolumeController(props: { enabled: boolean }) {
       setIsMuted(Spicetify.Player.getMute());
     }, 100);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const mouseUpListener = () => {
+      mouseDown.current = false;
+    };
+    const mouseMoveListener = (e: MouseEvent) => {
+      if (mouseDown.current) onClick(e as any);
+    };
+    document.addEventListener("mouseup", mouseUpListener);
+    document.addEventListener("mousemove", mouseMoveListener);
+    return () => {
+      document.removeEventListener("mouseup", mouseUpListener);
+      document.removeEventListener("mousemove", mouseMoveListener);
+    };
   }, []);
 
   return (
@@ -62,7 +82,9 @@ export default function VolumeController(props: { enabled: boolean }) {
       <div
         className={style.volumeSlider}
         onClick={onClick as any}
+        onMouseDown={() => (mouseDown.current = true)}
         id="bfs-volume-controller-slider"
+        ref={sliderRef}
       >
         <div
           id="bfs-volume-controller-inner"
