@@ -1,3 +1,5 @@
+import CONFIG from "../config";
+import { appendUpdateVisual, removeUpdateVisual } from "../updateVisual";
 import { lyricsExsist } from "../utils/utils";
 import DisplayIcon from "./DisplayIcon";
 
@@ -5,6 +7,26 @@ import style from "./textdata.module.css";
 
 export default function TextData(props: { title: string; artist: string }) {
   const { React } = Spicetify;
+  const { useState, useEffect } = React;
+
+  const [titleWeight, setTitleWeight] = useState<string>(
+    CONFIG.get<string>("titleFontWeight") || "normal"
+  );
+  const [artistWeight, setArtistWeight] = useState<string>(
+    CONFIG.get<string>("artistFontWeight") || "normal"
+  );
+
+  const upv = () => {
+    setTitleWeight(CONFIG.get<string>("titleFontWeight") || "normal");
+    setArtistWeight(CONFIG.get<string>("artistFontWeight") || "normal");
+  };
+
+  useEffect(() => {
+    appendUpdateVisual(upv);
+    return () => {
+      removeUpdateVisual(upv);
+    };
+  }, []);
 
   const getTitleAndArtistSize = () => {
     const titleText = props.title.length;
@@ -44,16 +66,22 @@ export default function TextData(props: { title: string; artist: string }) {
         className: style.title,
         style: {
           fontSize: getTitleAndArtistSize()[0],
+          fontWeight: titleWeight,
         },
+        id: "bfs-title",
       })}
       <div
         className={style.artist}
         style={{
           fontSize: getTitleAndArtistSize()[1],
+          fontWeight: artistWeight,
         }}
+        id="bfs-artist-container"
       >
         <DisplayIcon icon={Spicetify.SVGIcons.artist} size={35} />
-        <span className={style.artistSpan}>{props.artist}</span>
+        <span className={style.artistSpan} id="bfs-artist">
+          {props.artist}
+        </span>
       </div>
     </>
   );

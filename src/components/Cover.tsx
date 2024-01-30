@@ -27,13 +27,15 @@ export default function Cover(props: { imgURL: string }) {
         " " +
         (CONFIG.get("showLyrics") === true ? style.lyrics : "")
       }
+      id="bfs-cover-container"
     >
-      <div className={style.shadow} />
+      <div className={style.shadow} id="bfs-cover-shadow" />
       <div
         style={{ backgroundImage: `url(${props.imgURL})` }}
         className={
           style.cover + " " + (CONFIG.get("fadeAnimation") ? style.fade : "")
         }
+        id="bfs-cover"
       />
       <div
         className={style.likeButton}
@@ -41,8 +43,9 @@ export default function Cover(props: { imgURL: string }) {
           Spicetify.Player.toggleHeart();
           setHeart((h) => !h);
         }}
+        id="bfs-like-button-container"
       >
-        <div>
+        <div id="bfs-like-button">
           <DisplayIcon
             icon={Spicetify.SVGIcons[heart ? "heart-active" : "heart"]}
             size={50}

@@ -2,6 +2,17 @@ import DisplayIcon from "./components/DisplayIcon";
 import style from "./config.module.css";
 import updateVisual from "./updateVisual";
 
+type FontWeight =
+  | "100"
+  | "200"
+  | "300"
+  | "normal"
+  | "500"
+  | "600"
+  | "bold"
+  | "800"
+  | "900";
+
 type Config = {
   trimTitle: boolean;
   showAllArtists: boolean;
@@ -14,6 +25,9 @@ type Config = {
   verticalMode: boolean;
   showNextSong: boolean;
   alignMusic: "left" | "center" | "right";
+
+  titleFontWeight: FontWeight;
+  artistFontWeight: FontWeight;
 };
 
 class ConfigInstance {
@@ -29,6 +43,9 @@ class ConfigInstance {
     verticalMode: false,
     showNextSong: false,
     alignMusic: "center",
+
+    titleFontWeight: "normal",
+    artistFontWeight: "normal",
   };
   private _config: Config = this._defaultConfig;
   constructor() {
@@ -160,6 +177,53 @@ function SelectConfigItem(props: {
   );
 }
 
+function FontWeightConfig(props: {
+  name: string;
+  field: keyof Config;
+  func?: () => any;
+}) {
+  const { React } = Spicetify;
+  const { useState } = React;
+  const { name, field, func } = props;
+  const [value, setValue] = useState(CONFIG.get<string>(field));
+
+  const options = [
+    "100",
+    "200",
+    "300",
+    "normal",
+    "500",
+    "600",
+    "bold",
+    "800",
+    "900",
+  ];
+
+  return (
+    <div className={style.configRow}>
+      <label className={style.col + " " + style.description}>{name}</label>
+      <div className={style.col + " " + style.action}>
+        <select
+          value={value}
+          onChange={(e) => {
+            setValue(() => {
+              const state = e.target.value;
+              CONFIG.set(field, state);
+              if (func) func();
+              return state;
+            });
+          }}
+          className={style.select}
+        >
+          {options.map((option) => (
+            <option value={option}>{option}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
 function ConfigView() {
   const { React } = Spicetify;
   return (
@@ -224,6 +288,16 @@ function ConfigView() {
         name="Align Music"
         field="alignMusic"
         options={["left", "center", "right"]}
+        func={updateVisual}
+      />
+      <FontWeightConfig
+        name="Title Font Weight"
+        field="titleFontWeight"
+        func={updateVisual}
+      />
+      <FontWeightConfig
+        name="Artist Font Weight"
+        field="artistFontWeight"
         func={updateVisual}
       />
     </>

@@ -152,6 +152,8 @@ export default function Controller() {
         " " +
         (useAdvancedController ? style.advanced : "")
       }
+      id="bfs-controller-container"
+      x-type={useAdvancedController ? "advanced" : "simple"}
     >
       {showController && useAdvancedController ? (
         <AdvancedController playing={playing} />

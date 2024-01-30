@@ -130,5 +130,11 @@ export default function BackgroundCanvas(props: { imgURL: string }) {
     };
   }, []);
 
-  return <canvas className={style.backgroundCanvas} ref={backgroundCanvas} />;
+  return (
+    <canvas
+      className={style.backgroundCanvas}
+      ref={backgroundCanvas}
+      id="bfs-background-canvas"
+    />
+  );
 }

@@ -101,6 +101,7 @@ export default function NextMusic() {
       className={
         style.nextMusic + " " + (visible && enabled ? style.visible : "")
       }
+      id="bfs-next-music-container"
     >
       {!nextMusic ||
       nextMusic.contextTrack == undefined ||
@@ -108,15 +109,18 @@ export default function NextMusic() {
         <></>
       ) : (
         <>
-          <div className={style.text}>
-            <div className={style.upnext}>Up next</div>
-            <div className={style.title}>
+          <div className={style.text} id="bfs-next-music-text-info">
+            <div className={style.upnext} id="bfs-next-music-upnext">
+              Up next
+            </div>
+            <div className={style.title} id="bfs-next-music-data">
               {processTitle(nextMusic.contextTrack.metadata.title || "")}
               {" · "}
               {processArtistName()}
             </div>
           </div>
           <img
+            id="bfs-next-music-cover"
             src={nextMusic.contextTrack.metadata.image_xlarge_url}
             className={style.cover}
           />

@@ -33,6 +33,7 @@ export default function VolumeController(props: { enabled: boolean }) {
       className={
         style.volumeController + " " + (props.enabled ? style.enabled : "")
       }
+      id="bfs-volume-controller-container"
     >
       <span
         className={style.volumeIcon}
@@ -42,6 +43,7 @@ export default function VolumeController(props: { enabled: boolean }) {
             return !m;
           });
         }}
+        id="bfs-volume-icon"
       >
         <DisplayIcon
           icon={
@@ -57,8 +59,13 @@ export default function VolumeController(props: { enabled: boolean }) {
         />
       </span>
 
-      <div className={style.volumeSlider} onClick={onClick as any}>
+      <div
+        className={style.volumeSlider}
+        onClick={onClick as any}
+        id="bfs-volume-controller-slider"
+      >
         <div
+          id="bfs-volume-controller-inner"
           className={style.volumeInner}
           style={{
             height: `${volume * 100}%`,

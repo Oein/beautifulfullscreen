@@ -36,16 +36,13 @@ function Foreground(props: {
 
   const refz = useRef(false);
   Spicetify.Platform.History.listen((location: Location) => {
-    if (refz.current) {
-      refz.current = false;
-      return;
-    }
+    // if (location.pathname === "/lyrics-plus") return;
     lastApp.current = location.pathname;
   });
 
   function requestLyricsPlus() {
     if (lastApp.current !== "/lyrics-plus") {
-      refz.current = true;
+      // refz.current = true;
       Spicetify.Platform.History.push("/lyrics-plus");
     }
   }
@@ -73,11 +70,11 @@ function Foreground(props: {
     if (!props.visible) {
       // console.log("lastApp", lastApp.current);
       Spicetify.Platform.History.push(lastApp.current);
-    }
+    } else if (showLyrics) requestLyricsPlus();
   }, [props.visible]);
 
   return (
-    <div className={style.foreground}>
+    <div className={style.foreground} id="bfs-foreground-container">
       <div
         className={
           style.left +
@@ -102,6 +99,7 @@ function Foreground(props: {
               ? "start"
               : "end",
         }}
+        id="bfs-foreground-music-container"
       >
         <Cover imgURL={props.coverURL} />
         <div
@@ -114,6 +112,7 @@ function Foreground(props: {
             " " +
             (alignMusic == "left" ? style.alignLeft : "")
           }
+          id="bfs-foreground-music-details"
         >
           <TextData title={props.title} artist={props.artist} />
           <Controller />
@@ -206,12 +205,14 @@ function UI(props: { visible: boolean }) {
   return (
     <div
       className={style.container + " " + (visible ? style.visible : "")}
+      id="bfs-container"
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
         openConfig();
       }}
       onDoubleClick={() => {
+        if (CONFIG.get("showLyrics")) Spicetify.Platform.History.goBack();
         setVisible(false);
       }}
     >

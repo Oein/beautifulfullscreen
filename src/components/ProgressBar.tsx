@@ -24,19 +24,24 @@ export default function ProgressBar() {
   };
 
   return (
-    <div className={style.progressBarContainer}>
-      <span className={style.eslaped}>
+    <div className={style.progressBarContainer} id="bfs-progressbar-container">
+      <span className={style.eslaped} id="bfs-progressbar-eslaped">
         {Spicetify.Player.formatTime(value)}
       </span>
-      <div className={style.progressBar} onClick={onClick}>
+      <div
+        className={style.progressBar}
+        onClick={onClick}
+        id="bfs-progressbar-progressbar"
+      >
         <div
           className={style.progressBarInner}
+          id="bfs-progressbar-progressbar-inner"
           style={{
             width: `${(value / duration) * 100}%`,
           }}
         ></div>
       </div>
-      <span className={style.duration}>
+      <span className={style.duration} id="bfs-progressbar-duration">
         {Spicetify.Player.formatTime(duration)}
       </span>
     </div>
