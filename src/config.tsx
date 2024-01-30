@@ -28,7 +28,17 @@ type Config = {
   alignMusic: "left" | "center" | "right";
 
   titleFontWeight: FontWeight;
+  titleFontSize:
+    | "auto"
+    | "87px"
+    | "70px"
+    | "60px"
+    | "54px"
+    | "50px"
+    | "35px"
+    | "40px";
   artistFontWeight: FontWeight;
+  artistFontSize: "auto" | "32px" | "31px" | "29px" | "28px" | "26px" | "20px";
 };
 
 class ConfigInstance {
@@ -46,7 +56,9 @@ class ConfigInstance {
     alignMusic: "center",
 
     titleFontWeight: "normal",
+    titleFontSize: "auto",
     artistFontWeight: "normal",
+    artistFontSize: "auto",
   };
   private _config: Config = this._defaultConfig;
   constructor() {
@@ -290,10 +302,31 @@ function ConfigView() {
         field="titleFontWeight"
         func={updateVisual}
       />
+      <SelectConfigItem
+        name="Title Font Size"
+        field="titleFontSize"
+        func={updateVisual}
+        options={[
+          "auto",
+          "87px",
+          "70px",
+          "60px",
+          "54px",
+          "50px",
+          "35px",
+          "40px",
+        ]}
+      />
       <FontWeightConfig
         name="Artist Font Weight"
         field="artistFontWeight"
         func={updateVisual}
+      />
+      <SelectConfigItem
+        name="Artist Font Size"
+        field="artistFontSize"
+        func={updateVisual}
+        options={["auto", "32px", "31px", "29px", "28px", "26px", "20px"]}
       />
     </>
   );

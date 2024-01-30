@@ -15,10 +15,18 @@ export default function TextData(props: { title: string; artist: string }) {
   const [artistWeight, setArtistWeight] = useState<string>(
     CONFIG.get<string>("artistFontWeight") || "normal"
   );
+  const [titleSize, setTitleSize] = useState<string>(
+    CONFIG.get<string>("titleFontSize") || "auto"
+  );
+  const [artistSizeState, setArtistSize] = useState<string>(
+    CONFIG.get<string>("artistFontSize") || "auto"
+  );
 
   const upv = () => {
     setTitleWeight(CONFIG.get<string>("titleFontWeight") || "normal");
     setArtistWeight(CONFIG.get<string>("artistFontWeight") || "normal");
+    setTitleSize(CONFIG.get<string>("titleFontSize") || "auto");
+    setArtistSize(CONFIG.get<string>("artistFontSize") || "auto");
   };
 
   useEffect(() => {
@@ -54,6 +62,13 @@ export default function TextData(props: { title: string; artist: string }) {
       }
     }
 
+    if (titleSize !== "auto") {
+      size = titleSize;
+    }
+    if (artistSizeState !== "auto") {
+      artistSize = artistSizeState;
+    }
+
     return [size, artistSize];
   };
 
@@ -78,7 +93,10 @@ export default function TextData(props: { title: string; artist: string }) {
         }}
         id="bfs-artist-container"
       >
-        <DisplayIcon icon={Spicetify.SVGIcons.artist} size={35} />
+        <DisplayIcon
+          icon={Spicetify.SVGIcons.artist}
+          size={parseInt(getTitleAndArtistSize()[1].replace("px", ""))}
+        />
         <span className={style.artistSpan} id="bfs-artist">
           {props.artist}
         </span>

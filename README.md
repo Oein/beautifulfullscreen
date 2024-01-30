@@ -34,6 +34,13 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 - Show Lyrics
 - Align Music
 
+### Font options
+
+- Title Font Size
+- Title Font Weight
+- Artist Font Size
+- Artist Font Weight
+
 ## Installation
 
 ### With Marketplace (Recommended)
