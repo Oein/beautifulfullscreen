@@ -36,5 +36,19 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 
 ## Installation
 
+### With Marketplace (Recommended)
+
 1. Install [Marketplace](https://github.com/spicetify/spicetify-marketplace)
 2. Go to marketplace and install `beautifulfullscreen`
+
+### Manually
+
+1. Download latest extension build at [marketplace/bfs-bundle.js](https://github.com/Oein/beautifulfullscreen/blob/main/marketplace/bfs-bundle.js).
+2. Put `bfs-bundle.js` into `Spicetify\Extensions` folder.
+   See [Spicetify's Docs](https://spicetify.app/docs/advanced-usage/extensions#installing) to find your extensions folder.
+3. Run command
+
+```sh
+spicetify config extensions bfs-bundle.js
+spicetify apply
+```
