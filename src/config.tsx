@@ -11,7 +11,8 @@ type FontWeight =
   | "600"
   | "bold"
   | "800"
-  | "900";
+  | "900"
+  | "950";
 
 type Config = {
   trimTitle: boolean;
@@ -187,18 +188,6 @@ function FontWeightConfig(props: {
   const { name, field, func } = props;
   const [value, setValue] = useState(CONFIG.get<string>(field));
 
-  const options = [
-    "100",
-    "200",
-    "300",
-    "normal",
-    "500",
-    "600",
-    "bold",
-    "800",
-    "900",
-  ];
-
   return (
     <div className={style.configRow}>
       <label className={style.col + " " + style.description}>{name}</label>
@@ -215,9 +204,16 @@ function FontWeightConfig(props: {
           }}
           className={style.select}
         >
-          {options.map((option) => (
-            <option value={option}>{option}</option>
-          ))}
+          <option value={"100"}>Thin</option>
+          <option value={"200"}>Extra Light</option>
+          <option value={"300"}>Light</option>
+          <option value={"normal"}>Normal</option>
+          <option value={"500"}>Medium</option>
+          <option value={"600"}>Semi Bold</option>
+          <option value={"bold"}>Bold</option>
+          <option value={"800"}>Extra Bold</option>
+          <option value={"900"}>Black</option>
+          <option value={"950"}>Extra Black</option>
         </select>
       </div>
     </div>
