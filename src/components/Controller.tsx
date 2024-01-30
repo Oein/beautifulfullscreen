@@ -155,11 +155,12 @@ export default function Controller() {
       id="bfs-controller-container"
       x-type={useAdvancedController ? "advanced" : "simple"}
     >
-      {showController && useAdvancedController ? (
-        <AdvancedController playing={playing} />
-      ) : (
-        <SimpleController playing={playing} />
-      )}
+      {showController &&
+        (useAdvancedController ? (
+          <AdvancedController playing={playing} />
+        ) : (
+          <SimpleController playing={playing} />
+        ))}
       {showProgressBar && <ProgressBar />}
     </div>
   );

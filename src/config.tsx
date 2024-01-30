@@ -270,7 +270,6 @@ function ConfigView() {
         name="Advanced Controller"
         field="advancedController"
         func={updateVisual}
-        disabled={!CONFIG.get("enableController")}
       />
 
       <Seperator />
