@@ -33,3 +33,8 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 - Vertical Mode
 - Show Lyrics
 - Align Music
+
+## Installation
+
+1. Install [Marketplace](https://github.com/spicetify/spicetify-marketplace)
+2. Go to marketplace and install `beautifulfullscreen`
