@@ -288,15 +288,15 @@ function ConfigView() {
         func={updateVisual}
       />
       <ConfigItem name="Show Lyrics" field="showLyrics" func={updateVisual} />
-
-      <Seperator />
-      {/* Visual Options */}
       <SelectConfigItem
         name="Align Music"
         field="alignMusic"
         options={["left", "center", "right"]}
         func={updateVisual}
       />
+
+      {/* Font Options */}
+      <Seperator />
       <FontWeightConfig
         name="Title Font Weight"
         field="titleFontWeight"
