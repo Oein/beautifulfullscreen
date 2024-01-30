@@ -12,6 +12,7 @@ import VolumeController from "./components/VolumeController";
 import NextMusic from "./components/NextMusic";
 
 container.className = style.bfs;
+container.id = "bfs-root";
 
 function Foreground(props: {
   title: string;
