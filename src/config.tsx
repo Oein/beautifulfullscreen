@@ -2,7 +2,15 @@ import DisplayIcon from "./components/DisplayIcon";
 import style from "./config.module.css";
 import updateVisual from "./updateVisual";
 
-type FontWeight =
+export type Background =
+  | "Cover"
+  | "Deasturated"
+  | "Light Vibrant"
+  | "Vibrant"
+  | "Vibrant non alarming"
+  | "Prominent";
+
+export type FontWeight =
   | "100"
   | "200"
   | "300"
@@ -26,6 +34,7 @@ type Config = {
   verticalMode: boolean;
   showNextSong: boolean;
   alignMusic: "left" | "center" | "right";
+  background: Background;
 
   titleFontWeight: FontWeight;
   titleFontSize:
@@ -54,6 +63,7 @@ class ConfigInstance {
     verticalMode: false,
     showNextSong: false,
     alignMusic: "center",
+    background: "Cover",
 
     titleFontWeight: "normal",
     titleFontSize: "auto",
@@ -292,6 +302,19 @@ function ConfigView() {
         name="Align Music"
         field="alignMusic"
         options={["left", "center", "right"]}
+        func={updateVisual}
+      />
+      <SelectConfigItem
+        name="Background"
+        field="background"
+        options={[
+          "Cover",
+          "Deasturated",
+          "Light Vibrant",
+          "Vibrant",
+          "Vibrant non alarming",
+          "Prominent",
+        ]}
         func={updateVisual}
       />
 

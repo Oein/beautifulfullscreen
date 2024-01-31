@@ -10,6 +10,7 @@ import { lyricsExsist } from "./utils/utils";
 import { appendUpdateVisual, removeUpdateVisual } from "./updateVisual";
 import VolumeController from "./components/VolumeController";
 import NextMusic from "./components/NextMusic";
+import eventEmitter from "./utils/eventEmitter";
 
 container.className = style.bfs;
 container.id = "bfs-root";
@@ -149,6 +150,8 @@ function UI(props: { visible: boolean }) {
     CONFIG.get<boolean>("enableVolumeController") || false
   );
 
+  const [textColor, setTextColor] = useState("#ffffff");
+
   const fetchData = () => {
     const meta = Spicetify.Player.data.item.metadata;
     setVolumeController(CONFIG.get<boolean>("enableVolumeController") || false);
@@ -203,6 +206,13 @@ function UI(props: { visible: boolean }) {
     };
   }, []);
 
+  useEffect(() => {
+    eventEmitter.on("textColorChange", setTextColor);
+    return () => {
+      eventEmitter.off("textColorChange", setTextColor);
+    };
+  }, []);
+
   return (
     <div
       className={style.container + " " + (visible ? style.visible : "")}
@@ -215,6 +225,10 @@ function UI(props: { visible: boolean }) {
       onDoubleClick={() => {
         if (CONFIG.get("showLyrics")) Spicetify.Platform.History.goBack();
         setVisible(false);
+      }}
+      style={{
+        color: textColor,
+        "--color": textColor,
       }}
     >
       <BackgroundCanvas imgURL={coverURL} />

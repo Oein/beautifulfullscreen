@@ -33,6 +33,7 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 - Vertical Mode
 - Show Lyrics
 - Align Music
+- Background Type (Cover, Deasturated, Light Vibrant, Vibrant, Vibrant non alarming, Prominent)
 
 ### Font options
 

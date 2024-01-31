@@ -1,5 +1,6 @@
 import CONFIG from "../config";
 import { appendUpdateVisual, removeUpdateVisual } from "../updateVisual";
+import eventEmitter from "../utils/eventEmitter";
 import { lyricsExsist } from "../utils/utils";
 import DisplayIcon from "./DisplayIcon";
 
@@ -21,6 +22,7 @@ export default function TextData(props: { title: string; artist: string }) {
   const [artistSizeState, setArtistSize] = useState<string>(
     CONFIG.get<string>("artistFontSize") || "auto"
   );
+  const [textColor, setTextColor] = useState("#ffffff");
 
   const upv = () => {
     setTitleWeight(CONFIG.get<string>("titleFontWeight") || "normal");
@@ -31,8 +33,10 @@ export default function TextData(props: { title: string; artist: string }) {
 
   useEffect(() => {
     appendUpdateVisual(upv);
+    eventEmitter.on("textColorChange", setTextColor);
     return () => {
       removeUpdateVisual(upv);
+      eventEmitter.off("textColorChange", setTextColor);
     };
   }, []);
 
@@ -82,6 +86,7 @@ export default function TextData(props: { title: string; artist: string }) {
         style: {
           fontSize: getTitleAndArtistSize()[0],
           fontWeight: titleWeight,
+          color: textColor,
         },
         id: "bfs-title",
       })}
@@ -97,7 +102,13 @@ export default function TextData(props: { title: string; artist: string }) {
           icon={Spicetify.SVGIcons.artist}
           size={parseInt(getTitleAndArtistSize()[1].replace("px", ""))}
         />
-        <span className={style.artistSpan} id="bfs-artist">
+        <span
+          className={style.artistSpan}
+          id="bfs-artist"
+          style={{
+            color: textColor,
+          }}
+        >
           {props.artist}
         </span>
       </div>
