@@ -39,6 +39,7 @@ function Foreground(props: {
   const [fit50, setFit50] = React.useState<Fit50>(
     CONFIG.get<Fit50>("fit50Mode") || "When overflow"
   );
+  const [transformX, setTransformX] = React.useState<number>(0);
   const mainContainer = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<number>(1);
 
@@ -79,12 +80,32 @@ function Foreground(props: {
     } else if (showLyrics) requestLyricsPlus();
   }, [props.visible]);
 
-  const onresize = () => {
+  const lastApply = useRef<number>(0);
+  const applyTimeout = useRef<NodeJS.Timeout | null>(null);
+  const finalizeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const secondFinalizeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const boundTime = 200;
+  const finalizeTime = 400;
+  const secondFinalizeTime = 1000;
+
+  const resizeApplyer = () => {
+    console.log("APPLY!", Date.now() - lastApply.current);
     const fit50 = CONFIG.get<Fit50>("fit50Mode");
     const _50vw = window.innerWidth / 2;
     const nowW = mainContainer.current?.getBoundingClientRect().width || 0;
     const originalWidth = nowW / scaleRef.current;
-    const needSclae = fit50 == "Disalbed" ? 1 : _50vw / originalWidth;
+    const needSclae =
+      fit50 == "Disalbed"
+        ? 1
+        : fit50 == "Always" || originalWidth > _50vw
+        ? _50vw / originalWidth
+        : 1;
+    const needTransform =
+      fit50 == "Disalbed"
+        ? 0
+        : fit50 == "Always" || originalWidth > _50vw
+        ? (41 + 32 + 25) * (1 - needSclae)
+        : 0;
 
     scaleRef.current = needSclae;
 
@@ -104,6 +125,44 @@ function Foreground(props: {
     );
 
     setContainerScale(needSclae);
+    setTransformX(needTransform);
+  };
+
+  const setFinalize = () => {
+    finalizeTimeout.current = setTimeout(() => {
+      resizeApplyer();
+      applyTimeout.current = null;
+    }, finalizeTime);
+    secondFinalizeTimeout.current = setTimeout(() => {
+      resizeApplyer();
+      applyTimeout.current = null;
+      finalizeTimeout.current = null;
+    }, secondFinalizeTime);
+  };
+
+  const onresize = () => {
+    if (
+      Date.now() - lastApply.current > boundTime &&
+      applyTimeout.current == null
+    ) {
+      resizeApplyer();
+      lastApply.current = Date.now();
+      setFinalize();
+      return;
+    }
+
+    if (applyTimeout.current == null) return;
+    clearTimeout(applyTimeout.current);
+
+    if (finalizeTimeout.current != null) clearTimeout(finalizeTimeout.current);
+    if (secondFinalizeTimeout.current != null)
+      clearTimeout(secondFinalizeTimeout.current);
+
+    applyTimeout.current = setTimeout(() => {
+      resizeApplyer();
+      applyTimeout.current = null;
+    }, boundTime);
+    setFinalize();
   };
 
   useEffect(() => {
@@ -165,7 +224,7 @@ function Foreground(props: {
                 : alignMusic === "left"
                 ? "start"
                 : "end",
-            transform: `scale(${containerScale})`,
+            transform: `scale(${containerScale}) translateX(${transformX}px)`,
             width: "fit-content",
             maxWidth: "unset",
           }}

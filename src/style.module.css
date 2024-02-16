@@ -61,7 +61,6 @@
   padding-left: calc(32px + 32px);
   text-align: center;
   transform-origin: left;
-  transform-box: content-box;
 
   box-sizing: border-box;
   overflow: visible;
