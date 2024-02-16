@@ -37,7 +37,7 @@ button.switch {
 }
 button.switch.disabled,
 button.switch[disabled] {
-  color: rgba(var(--spice-rgb-text), 0.3);
+  --color: rgba(var(--spice-rgb-text), 0.3);
 }
 
 .select {

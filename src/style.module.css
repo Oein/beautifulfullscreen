@@ -47,7 +47,9 @@
 
 .foreground > * {
   flex: 1;
-  /* max-width: 50vw; */
+}
+.foreground.showLyrics {
+  max-width: 50vw;
 }
 
 .left {
@@ -58,6 +60,8 @@
   padding: 32px;
   padding-left: calc(32px + 32px);
   text-align: center;
+  transform-origin: left;
+  transform-box: content-box;
 
   box-sizing: border-box;
   overflow: visible;
@@ -75,6 +79,13 @@
   padding-left: 32px;
   padding-right: calc(50px + 32px);
   flex-direction: row-reverse;
+}
+
+.lcont.showLyrics {
+  max-width: 50vw;
+  overflow: visible;
+  min-width: 50vw;
+  width: 50vw;
 }
 
 .left.alignRight.showLyrics {

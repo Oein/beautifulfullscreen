@@ -1,7 +1,7 @@
 let container: HTMLDivElement = document.createElement("div");
 
 import style from "./style.module.css";
-import CONFIG, { openConfig } from "./config";
+import CONFIG, { Fit50, openConfig } from "./config";
 import BackgroundCanvas from "./components/BackgroundCanvas";
 import TextData from "./components/TextData";
 import Controller from "./components/Controller";
@@ -35,16 +35,19 @@ function Foreground(props: {
   const [volumeController, setVolumeController] = React.useState<boolean>(
     CONFIG.get<boolean>("enableVolumeController") || false
   );
+  const [containerScale, setContainerScale] = React.useState<number>(1);
+  const [fit50, setFit50] = React.useState<Fit50>(
+    CONFIG.get<Fit50>("fit50Mode") || "When overflow"
+  );
+  const mainContainer = useRef<HTMLDivElement>(null);
+  const scaleRef = useRef<number>(1);
 
-  const refz = useRef(false);
   Spicetify.Platform.History.listen((location: Location) => {
-    // if (location.pathname === "/lyrics-plus") return;
     lastApp.current = location.pathname;
   });
 
   function requestLyricsPlus() {
     if (lastApp.current !== "/lyrics-plus") {
-      // refz.current = true;
       Spicetify.Platform.History.push("/lyrics-plus");
     }
   }
@@ -54,6 +57,7 @@ function Foreground(props: {
     setAlignMusic(CONFIG.get<string>("alignMusic") || "center");
     setVerticalMode(CONFIG.get<boolean>("verticalMode") || false);
     setVolumeController(CONFIG.get<boolean>("enableVolumeController") || false);
+    setFit50(CONFIG.get<Fit50>("fit50Mode") || "When overflow");
   };
 
   useEffect(() => {
@@ -75,49 +79,115 @@ function Foreground(props: {
     } else if (showLyrics) requestLyricsPlus();
   }, [props.visible]);
 
+  const onresize = () => {
+    const fit50 = CONFIG.get<Fit50>("fit50Mode");
+    const _50vw = window.innerWidth / 2;
+    const nowW = mainContainer.current?.getBoundingClientRect().width || 0;
+    const originalWidth = nowW / scaleRef.current;
+    const needSclae = fit50 == "Disalbed" ? 1 : _50vw / originalWidth;
+
+    scaleRef.current = needSclae;
+
+    console.log(
+      "50vw",
+      _50vw,
+      "nowW",
+      nowW,
+      "scaleRef",
+      scaleRef.current,
+      "originalWidth",
+      originalWidth,
+      "originalScale",
+      containerScale,
+      "needSclae",
+      needSclae
+    );
+
+    setContainerScale(needSclae);
+  };
+
+  useEffect(() => {
+    // on mainContainer resize
+    const observer = new ResizeObserver(onresize);
+    if (mainContainer.current) observer.observe(mainContainer.current);
+    return () => {
+      if (mainContainer.current) observer.unobserve(mainContainer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (fit50 == "Disalbed") {
+      setContainerScale(1);
+      scaleRef.current = 1;
+      return;
+    }
+    onresize();
+  }, [fit50, showLyrics]);
+
+  useEffect(() => {
+    Spicetify.Player.addEventListener("songchange", onresize);
+    window.addEventListener("resize", onresize);
+    return () => {
+      Spicetify.Player.removeEventListener("songchange", onresize);
+      window.removeEventListener("resize", onresize);
+    };
+  }, []);
+
   return (
-    <div className={style.foreground} id="bfs-foreground-container">
+    <div
+      className={style.foreground + " " + (showLyrics ? style.showLyrics : "")}
+      id="bfs-foreground-container"
+    >
       <div
-        className={
-          style.left +
-          " " +
-          (showLyrics ? style.showLyrics : "") +
-          " " +
-          (alignMusic == "right" ? style.alignRight : "") +
-          " " +
-          (verticalMode ? style.verticalMode : "") +
-          " " +
-          (alignMusic == "left" ? style.alignLeft : "") +
-          " " +
-          (volumeController && (showLyrics || alignMusic == "left")
-            ? style.volumeController
-            : "")
-        }
-        style={{
-          justifyContent:
-            alignMusic === "center"
-              ? "center"
-              : alignMusic === "left"
-              ? "start"
-              : "end",
-        }}
-        id="bfs-foreground-music-container"
+        className={style.lcont + " " + (showLyrics ? style.showLyrics : "")}
+        id="bfs-leftside-container"
       >
-        <Cover imgURL={props.coverURL} />
         <div
           className={
-            style.details +
+            style.left +
             " " +
-            (verticalMode ? style.verticalMode : "") +
+            (showLyrics ? style.showLyrics : "") +
             " " +
             (alignMusic == "right" ? style.alignRight : "") +
             " " +
-            (alignMusic == "left" ? style.alignLeft : "")
+            (verticalMode ? style.verticalMode : "") +
+            " " +
+            (alignMusic == "left" ? style.alignLeft : "") +
+            " " +
+            (volumeController && (showLyrics || alignMusic == "left")
+              ? style.volumeController
+              : "")
           }
-          id="bfs-foreground-music-details"
+          style={{
+            justifyContent:
+              alignMusic === "center"
+                ? "center"
+                : alignMusic === "left"
+                ? "start"
+                : "end",
+            transform: `scale(${containerScale})`,
+            width: "fit-content",
+            maxWidth: "unset",
+          }}
+          id="bfs-foreground-music-container"
+          ref={mainContainer}
         >
-          <TextData title={props.title} artist={props.artist} />
-          <Controller />
+          <Cover imgURL={props.coverURL} />
+          <div
+            className={
+              style.details +
+              " " +
+              (verticalMode ? style.verticalMode : "") +
+              " " +
+              (alignMusic == "right" ? style.alignRight : "") +
+              " " +
+              (alignMusic == "left" ? style.alignLeft : "")
+            }
+            id="bfs-foreground-music-details"
+          >
+            <TextData title={props.title} artist={props.artist} />
+            <Controller />
+          </div>
         </div>
       </div>
       {showLyrics && (

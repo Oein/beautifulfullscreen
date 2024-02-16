@@ -22,6 +22,8 @@ export type FontWeight =
   | "900"
   | "950";
 
+export type Fit50 = "Disalbed" | "When overflow" | "Always";
+
 type Config = {
   trimTitle: boolean;
   showAllArtists: boolean;
@@ -35,6 +37,7 @@ type Config = {
   showNextSong: boolean;
   alignMusic: "left" | "center" | "right";
   background: Background;
+  fit50Mode: Fit50;
 
   titleFontWeight: FontWeight;
   titleFontSize:
@@ -64,6 +67,8 @@ class ConfigInstance {
     showNextSong: false,
     alignMusic: "center",
     background: "Cover",
+    // fit50: true,
+    fit50Mode: "When overflow",
 
     titleFontWeight: "normal",
     titleFontSize: "auto",
@@ -135,7 +140,7 @@ function ConfigItem(props: {
   const { name, field, func, disabled } = props;
   const [value, setValue] = useState(CONFIG.get<boolean>(field) || false);
   return (
-    <div className={style.configRow}>
+    <div className={style.configRow} data-value={value}>
       <label className={style.col + " " + style.description}>{name}</label>
       <div className={style.col + " " + style.action}>
         <button
@@ -172,7 +177,7 @@ function SelectConfigItem(props: {
   const { name, field, func } = props;
   const [value, setValue] = useState(CONFIG.get<string>(field));
   return (
-    <div className={style.configRow}>
+    <div className={style.configRow} data-value={value}>
       <label className={style.col + " " + style.description}>{name}</label>
       <div className={style.col + " " + style.action}>
         <select
@@ -211,7 +216,7 @@ function FontWeightConfig(props: {
   const [value, setValue] = useState(CONFIG.get<string>(field));
 
   return (
-    <div className={style.configRow}>
+    <div className={style.configRow} data-value={value}>
       <label className={style.col + " " + style.description}>{name}</label>
       <div className={style.col + " " + style.action}>
         <select
@@ -298,6 +303,13 @@ function ConfigView() {
         func={updateVisual}
       />
       <ConfigItem name="Show Lyrics" field="showLyrics" func={updateVisual} />
+      <SelectConfigItem
+        name="Scale into 50vw"
+        field="fit50Mode"
+        options={["Disalbed", "When overflow", "Always"]}
+        func={updateVisual}
+      />
+
       <SelectConfigItem
         name="Align Music"
         field="alignMusic"
