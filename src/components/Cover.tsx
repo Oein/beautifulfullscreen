@@ -2,7 +2,10 @@ import CONFIG from "../config";
 import DisplayIcon from "./DisplayIcon";
 import style from "./cover.module.css";
 
-export default function Cover(props: { imgURL: string }) {
+export default function Cover(props: {
+  imgURL: string;
+  marginBottom: boolean;
+}) {
   const { React } = Spicetify;
   const { useState, useEffect } = React;
   const [heart, setHeart] = useState(Spicetify.Player.getHeart());
@@ -28,6 +31,9 @@ export default function Cover(props: { imgURL: string }) {
         (CONFIG.get("showLyrics") === true ? style.lyrics : "")
       }
       id="bfs-cover-container"
+      style={{
+        marginBottom: props.marginBottom ? "1.5rem" : "0",
+      }}
     >
       <div className={style.shadow} id="bfs-cover-shadow" />
       <div

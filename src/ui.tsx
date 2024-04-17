@@ -225,13 +225,13 @@ function Foreground(props: {
                 ? "start"
                 : "end",
             transform: `scale(${containerScale}) translateX(${transformX}px)`,
-            width: "fit-content",
+            width: verticalMode ? "unset" : "fit-content",
             maxWidth: "unset",
           }}
           id="bfs-foreground-music-container"
           ref={mainContainer}
         >
-          <Cover imgURL={props.coverURL} />
+          <Cover imgURL={props.coverURL} marginBottom={verticalMode} />
           <div
             className={
               style.details +
