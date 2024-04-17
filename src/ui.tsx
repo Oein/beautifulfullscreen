@@ -69,17 +69,6 @@ function Foreground(props: {
     };
   }, []);
 
-  useEffect(() => {
-    if (showLyrics) requestLyricsPlus();
-  }, [showLyrics]);
-
-  useEffect(() => {
-    if (!props.visible) {
-      // console.log("lastApp", lastApp.current);
-      Spicetify.Platform.History.push(lastApp.current);
-    } else if (showLyrics) requestLyricsPlus();
-  }, [props.visible]);
-
   const lastApply = useRef<number>(0);
   const applyTimeout = useRef<NodeJS.Timeout | null>(null);
   const finalizeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -191,6 +180,12 @@ function Foreground(props: {
       window.removeEventListener("resize", onresize);
     };
   }, []);
+
+  useEffect(() => {
+    if (!props.visible) return;
+    if (!showLyrics) return;
+    requestLyricsPlus();
+  }, [showLyrics, props.visible]);
 
   return (
     <div
