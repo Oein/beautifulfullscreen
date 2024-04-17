@@ -1,7 +1,10 @@
 import DisplayIcon from "./DisplayIcon";
 import style from "./VolumeController.module.css";
 
-export default function VolumeController(props: { enabled: boolean }) {
+export default function VolumeController(props: {
+  enabled: boolean;
+  visible: boolean;
+}) {
   const { React } = Spicetify;
   const { useState, useEffect, useRef } = React;
   const [volume, setVolume] = useState(Spicetify.Player.getVolume());
@@ -48,10 +51,14 @@ export default function VolumeController(props: { enabled: boolean }) {
     };
   }, []);
 
+  console.log("VolumeController rendered", props.visible);
+
   return (
     <div
       className={
-        style.volumeController + " " + (props.enabled ? style.enabled : "")
+        style.volumeController +
+        " " +
+        (props.enabled && props.visible ? style.enabled : "")
       }
       id="bfs-volume-controller-container"
     >

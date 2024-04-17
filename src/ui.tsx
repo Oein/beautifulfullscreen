@@ -269,7 +269,7 @@ let mountAgain: Function | null = null;
 
 function UI(props: { visible: boolean }) {
   const { React } = Spicetify;
-  const { useState, useEffect, useRef } = React;
+  const { useState, useEffect } = React;
 
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
@@ -361,7 +361,7 @@ function UI(props: { visible: boolean }) {
       }}
     >
       <BackgroundCanvas imgURL={coverURL} />
-      <VolumeController enabled={volumeController} />
+      <VolumeController enabled={volumeController} visible={visible} />
       <NextMusic />
       <Foreground
         title={title}
