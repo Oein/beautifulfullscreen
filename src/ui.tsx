@@ -244,7 +244,11 @@ function Foreground(props: {
             }
             id="bfs-foreground-music-details"
           >
-            <TextData title={props.title} artist={props.artist} />
+            <TextData
+              title={props.title}
+              artist={props.artist}
+              alignMusic={alignMusic as "right" | "left" | "center"}
+            />
             <Controller />
           </div>
         </div>

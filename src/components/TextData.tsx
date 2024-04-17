@@ -6,7 +6,11 @@ import DisplayIcon from "./DisplayIcon";
 
 import style from "./textdata.module.css";
 
-export default function TextData(props: { title: string; artist: string }) {
+export default function TextData(props: {
+  title: string;
+  artist: string;
+  alignMusic: "left" | "center" | "right";
+}) {
   const { React } = Spicetify;
   const { useState, useEffect } = React;
 
@@ -87,6 +91,7 @@ export default function TextData(props: { title: string; artist: string }) {
           fontSize: getTitleAndArtistSize()[0],
           fontWeight: titleWeight,
           color: textColor,
+          textAlign: props.alignMusic,
         },
         id: "bfs-title",
       })}
