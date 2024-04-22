@@ -61,3 +61,8 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 spicetify config extensions bfs-bundle.js
 spicetify apply
 ```
+
+## Usage
+
+- Open : Click Button next to the forward button.
+- Close : Double click
