@@ -5,14 +5,13 @@
 }
 
 .eslaped {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 0px 10px;
   min-width: 40px;
   color: var(--color);
 }
 
 .duration {
-  margin-left: 10px;
+  margin: 0px 10px;
   color: var(--color);
 }
 
