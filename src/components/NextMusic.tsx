@@ -1,5 +1,6 @@
 import CONFIG from "../config";
 import { appendUpdateVisual, removeUpdateVisual } from "../updateVisual";
+import names from "../utils/classNames";
 import style from "./nextmusic.module.css";
 
 type ContextTrack = {
@@ -98,9 +99,7 @@ export default function NextMusic() {
 
   return (
     <div
-      className={
-        style.nextMusic + " " + (visible && enabled ? style.visible : "")
-      }
+      className={names(style.nextMusic, visible && enabled && style.visible)}
       id="bfs-next-music-container"
     >
       {!nextMusic ||

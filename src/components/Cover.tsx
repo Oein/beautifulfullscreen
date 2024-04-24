@@ -1,4 +1,5 @@
 import CONFIG from "../config";
+import names from "../utils/classNames";
 import DisplayIcon from "./DisplayIcon";
 import style from "./cover.module.css";
 
@@ -25,11 +26,10 @@ export default function Cover(props: {
 
   return (
     <div
-      className={
-        style.coverContainer +
-        " " +
-        (CONFIG.get("showLyrics") === true ? style.lyrics : "")
-      }
+      className={names(
+        style.coverContainer,
+        CONFIG.get("showLyrics") === true && style.lyrics
+      )}
       id="bfs-cover-container"
       style={{
         marginBottom: props.marginBottom ? "1.5rem" : "0",
@@ -38,9 +38,10 @@ export default function Cover(props: {
       <div className={style.shadow} id="bfs-cover-shadow" />
       <div
         style={{ backgroundImage: `url(${props.imgURL})` }}
-        className={
-          style.cover + " " + (CONFIG.get("fadeAnimation") ? style.fade : "")
-        }
+        className={names(
+          style.cover,
+          CONFIG.get("fadeAnimation") && style.fade
+        )}
         id="bfs-cover"
       />
       <div

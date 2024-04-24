@@ -1,5 +1,6 @@
 import CONFIG from "../config";
 import { appendUpdateVisual, removeUpdateVisual } from "../updateVisual";
+import names from "../utils/classNames";
 import ButtonIcon from "./ButtonIcon";
 import DisplayIcon from "./DisplayIcon";
 import ProgressBar from "./ProgressBar";
@@ -147,11 +148,10 @@ export default function Controller() {
 
   return (
     <div
-      className={
-        style.controllerContainer +
-        " " +
-        (useAdvancedController ? style.advanced : "")
-      }
+      className={names(
+        style.controllerContainer,
+        useAdvancedController && style.advanced
+      )}
       id="bfs-controller-container"
       x-type={useAdvancedController ? "advanced" : "simple"}
     >

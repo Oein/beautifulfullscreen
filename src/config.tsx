@@ -1,6 +1,7 @@
 import DisplayIcon from "./components/DisplayIcon";
 import style from "./config.module.css";
 import updateVisual from "./updateVisual";
+import names from "./utils/classNames";
 
 export type Background =
   | "Cover"
@@ -141,14 +142,13 @@ function ConfigItem(props: {
   const [value, setValue] = useState(CONFIG.get<boolean>(field) || false);
   return (
     <div className={style.configRow} data-value={value}>
-      <label className={style.col + " " + style.description}>{name}</label>
-      <div className={style.col + " " + style.action}>
+      <label className={names(style.col, style.description)}>{name}</label>
+      <div className={names(style.col, style.action)}>
         <button
-          className={
-            style.switch +
-            " " +
-            (disabled || value == false ? style.disabled : "")
-          }
+          className={names(
+            style.switch,
+            disabled || value == false ? style.disabled : ""
+          )}
           disabled={disabled}
           onClick={() => {
             setValue((v) => {
@@ -178,8 +178,8 @@ function SelectConfigItem(props: {
   const [value, setValue] = useState(CONFIG.get<string>(field));
   return (
     <div className={style.configRow} data-value={value}>
-      <label className={style.col + " " + style.description}>{name}</label>
-      <div className={style.col + " " + style.action}>
+      <label className={names(style.col, style.description)}>{name}</label>
+      <div className={names(style.col, style.action)}>
         <select
           value={value}
           onChange={(e) => {
@@ -217,8 +217,8 @@ function FontWeightConfig(props: {
 
   return (
     <div className={style.configRow} data-value={value}>
-      <label className={style.col + " " + style.description}>{name}</label>
-      <div className={style.col + " " + style.action}>
+      <label className={names(style.col, style.description)}>{name}</label>
+      <div className={names(style.col, style.action)}>
         <select
           value={value}
           onChange={(e) => {

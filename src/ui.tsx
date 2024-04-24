@@ -11,6 +11,7 @@ import { appendUpdateVisual, removeUpdateVisual } from "./updateVisual";
 import VolumeController from "./components/VolumeController";
 import NextMusic from "./components/NextMusic";
 import eventEmitter from "./utils/eventEmitter";
+import names from "./utils/classNames";
 
 container.className = style.bfs;
 container.id = "bfs-root";
@@ -197,21 +198,16 @@ function Foreground(props: {
         id="bfs-leftside-container"
       >
         <div
-          className={
-            style.left +
-            " " +
-            (showLyrics ? style.showLyrics : "") +
-            " " +
-            (alignMusic == "right" ? style.alignRight : "") +
-            " " +
-            (verticalMode ? style.verticalMode : "") +
-            " " +
-            (alignMusic == "left" ? style.alignLeft : "") +
-            " " +
-            (volumeController && (showLyrics || alignMusic == "left")
-              ? style.volumeController
-              : "")
-          }
+          className={names(
+            style.left,
+            showLyrics && style.showLyrics,
+            alignMusic == "right" && style.alignRight,
+            verticalMode && style.verticalMode,
+            alignMusic == "left" && style.alignLeft,
+            volumeController &&
+              (showLyrics || alignMusic == "left") &&
+              style.volumeController
+          )}
           style={{
             justifyContent:
               alignMusic === "center"
@@ -228,15 +224,12 @@ function Foreground(props: {
         >
           <Cover imgURL={props.coverURL} marginBottom={verticalMode} />
           <div
-            className={
-              style.details +
-              " " +
-              (verticalMode ? style.verticalMode : "") +
-              " " +
-              (alignMusic == "right" ? style.alignRight : "") +
-              " " +
-              (alignMusic == "left" ? style.alignLeft : "")
-            }
+            className={names(
+              style.details,
+              verticalMode && style.verticalMode,
+              alignMusic == "right" && style.alignRight,
+              alignMusic == "left" && style.alignLeft
+            )}
             id="bfs-foreground-music-details"
           >
             <TextData
@@ -343,7 +336,7 @@ function UI(props: { visible: boolean }) {
 
   return (
     <div
-      className={style.container + " " + (visible ? style.visible : "")}
+      className={names(style.container, visible && style.visible)}
       id="bfs-container"
       onContextMenu={(e) => {
         e.preventDefault();
