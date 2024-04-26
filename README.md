@@ -1,5 +1,7 @@
 # Beautiful Fullscreen
 
+[![CodeFactor](https://www.codefactor.io/repository/github/oein/beautifulfullscreen/badge)](https://www.codefactor.io/repository/github/oein/beautifulfullscreen)
+
 Minimal album cover art display with beautiful blur effect background. Activating button locates in top bar. While in display mode, double click anywhere to exit. Right click anywhere to open setting menu. Now also includes lyrics if `lyrics-plus` custom app installed.
 
 ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/marketplace/preview.gif)
