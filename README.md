@@ -36,5 +36,6 @@ spicetify apply
 
 ## Usage
 
-- Open : Click Button next to the forward button.
-- Close : Double click
+- Open : Click play button which is at the right side of the playbar.
+- Open menu : Right click anywhere in the fullscreen mode.
+- Close : Double click.
