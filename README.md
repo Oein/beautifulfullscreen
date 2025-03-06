@@ -13,37 +13,7 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 
 ## Supported Options
 
-### General
-
-- Trim title
-- Show All Arists
-- Fade Animation
-
-### Features
-
-- Enable Progressbar
-- Show Next Song
-
-### Controllers
-
-- Enable Volume Controller
-- Enable Controller
-- Advanced Controller
-
-### Visualizations
-
-- Vertical Mode
-- Show Lyrics
-- Align Music
-- Background Type (Cover, Deasturated, Light Vibrant, Vibrant, Vibrant non alarming, Prominent)
-- Fit to 50% of screen
-
-### Font options
-
-- Title Font Size
-- Title Font Weight
-- Artist Font Size
-- Artist Font Weight
+![Screenshot of config page](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/config.png)
 
 ## Installation
 
