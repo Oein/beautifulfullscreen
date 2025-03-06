@@ -2,8 +2,8 @@
   {
     "name": "Beautiful Fullscreen",
     "description": "Remade version of Full App Display",
-    "preview": "marketplace/preview.gif",
-    "main": "marketplace/bfs-bundle.js",
+    "preview": "images/preview.gif",
+    "main": "dist/beautiful-fullscreen.js",
     "readme": "README.md",
     "authors": [{ "name": "Oein", "url": "https://github.com/Oein" }]
   }

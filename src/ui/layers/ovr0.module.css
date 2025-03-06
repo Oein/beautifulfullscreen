@@ -1,0 +1,100 @@
+.container {
+  max-height: 70dvh;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.bottomPad {
+  height: 16px;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 24px;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.select {
+  appearance: none;
+  background-color: #333333;
+  border: 1px solid #535353;
+  border-radius: 4px;
+  color: currentColor;
+  cursor: pointer;
+  font-size: 14px;
+  height: 32px;
+  outline: none;
+  padding: 0 32px 0 12px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.select:hover {
+  border-color: #b3b3b3;
+}
+
+.select:focus {
+  border-color: #1db954;
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.3);
+}
+
+.select option {
+  background-color: #282828;
+  color: currentColor;
+  padding: 8px 12px;
+}
+
+.selectContainer {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selectWrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #b3b3b3;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.optname {
+  width: max-content;
+  min-width: max-content;
+}
+
+.title {
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  font-size: 1.45rem;
+  font-weight: bold;
+}
+
+.nouppad {
+  padding-top: 0;
+}

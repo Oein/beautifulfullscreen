@@ -1,0 +1,10 @@
+.bfs {
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  transition: var(--transition);
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100dvw;
+  height: 100dvh;
+}

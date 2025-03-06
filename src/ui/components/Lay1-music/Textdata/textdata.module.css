@@ -1,0 +1,22 @@
+.title {
+  font-size: 87px;
+  font-weight: var(--glue-font-weight-black);
+  line-height: 1;
+}
+
+.artist {
+  font-size: 54px;
+  font-weight: var(--glue-font-weight-medium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title,
+.artist {
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.artistSpan {
+  width: fit-content;
+}

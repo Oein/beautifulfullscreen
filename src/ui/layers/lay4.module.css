@@ -1,0 +1,7 @@
+.clock {
+  position: fixed;
+  transition: var(--transition);
+  font-size: 30px;
+  font-weight: 300;
+  font-family: Roboto, sans-serif;
+}

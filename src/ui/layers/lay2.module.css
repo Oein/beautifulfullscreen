@@ -1,0 +1,9 @@
+.container {
+  position: fixed;
+  left: 50%;
+  top: 0px;
+  width: 50dvw;
+  height: 100dvh;
+
+  transition: var(--transition);
+}

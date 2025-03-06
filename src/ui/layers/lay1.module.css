@@ -1,0 +1,25 @@
+.wrapper {
+  position: fixed;
+  height: 100dvh;
+  top: 0px;
+  transition: var(--transition);
+  display: flex;
+}
+
+.container {
+  height: 100dvh;
+  width: max-content;
+  transition: var(--transition);
+
+  display: flex;
+  padding: 0px 40px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  color: currentColor;
+  text-align: start;
+
+  transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}

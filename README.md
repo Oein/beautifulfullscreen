@@ -4,12 +4,12 @@
 
 Minimal album cover art display with beautiful blur effect background. Activating button locates in top bar. While in display mode, double click anywhere to exit. Right click anywhere to open setting menu. Now also includes lyrics if `lyrics-plus` custom app installed.
 
-![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/marketplace/preview.gif)
+![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/preview.gif)
 
-|                                                                                                  |                                                                                                  |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/1.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/2.png) |
-| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/3.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/screenshots/4.png) |
+|                                                                                             |                                                                                             |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/1.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/2.png) |
+| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/3.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/4.png) |
 
 ## Supported Options
 
@@ -54,13 +54,13 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 
 ### Manually
 
-1. Download latest extension build at [marketplace/bfs-bundle.js](https://github.com/Oein/beautifulfullscreen/blob/main/marketplace/bfs-bundle.js).
-2. Put `bfs-bundle.js` into `Spicetify\Extensions` folder.
+1. Download latest extension build at [dist/beautiful-fullscreen.js](https://github.com/Oein/beautifulfullscreen/blob/main/dist/beautiful-fullscreen).
+2. Put `beautiful-fullscreen.js` into `Spicetify\Extensions` folder.
    See [Spicetify's Docs](https://spicetify.app/docs/advanced-usage/extensions#installing) to find your extensions folder.
 3. Run command
 
 ```sh
-spicetify config extensions bfs-bundle.js
+spicetify config extensions beautiful-fullscreen.js
 spicetify apply
 ```
 
