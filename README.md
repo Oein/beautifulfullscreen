@@ -9,7 +9,7 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 |                                                                                             |                                                                                             |
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/1.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/2.png) |
-| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/3.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/4.png) |
+| ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/3.png) | ![Screenshot](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/5.png) |
 
 ## Supported Options
 
