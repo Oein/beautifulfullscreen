@@ -101,7 +101,9 @@ export default function Lay1() {
               enableVolumeController == "disable"
                 ? "0 40px"
                 : enableVolumeController == "left"
-                ? "0 40px 0 calc((50px + 32px) / 2 + 24px + 12px)"
+                ? verticalMode
+                  ? "0 40px"
+                  : "0 40px 0 calc((50px + 32px) / 2 + 24px + 12px)"
                 : "0 calc((50px + 32px) / 2 + 24px + 12px) 0 40px",
           }}
         >
