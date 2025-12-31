@@ -1,4 +1,4 @@
-import type { MouseEventHandler } from "react";
+import { useRef, type MouseEventHandler } from "react";
 
 import Lay0 from "./layers/Lay0-background";
 import s from "./ui.module.css";
@@ -15,6 +15,7 @@ export default function UI() {
 
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState("#ffffff");
+  const [pointerShown, setPointerShown] = useState(true);
 
   useEffect(() => {
     window.bfsCallback = () => {
@@ -46,6 +47,17 @@ export default function UI() {
     });
   };
 
+  const pointerTimeout = useRef<number | null>(null);
+  const pointerMove = () => {
+    setPointerShown(true);
+    if (pointerTimeout.current) {
+      clearTimeout(pointerTimeout.current);
+    }
+    pointerTimeout.current = window.setTimeout(() => {
+      setPointerShown(false);
+    }, 2000);
+  };
+
   return (
     <div
       style={{
@@ -53,12 +65,14 @@ export default function UI() {
         opacity: open ? 1 : 0,
         pointerEvents: open ? "auto" : "none",
         color,
+        cursor: pointerShown ? "default" : "none",
         // @ts-ignore
         "--color": color,
       }}
       className={s.bfs}
       onDoubleClick={doubleClickCallback}
       onContextMenu={oncontextmenu}
+      onPointerMove={pointerMove}
     >
       <Lay0 />
       <Lay1 />
