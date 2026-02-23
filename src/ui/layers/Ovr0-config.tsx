@@ -181,6 +181,9 @@ export default function Ovr0() {
         options={["auto", "32px", "31px", "29px", "28px", "26px", "20px"]}
       />
 
+      <div className={s.title}>Miscellaneous</div>
+      <BooleanOption id="autoStart" name="Auto start" />
+
       <div className={s.bottomPad} />
     </div>
   );

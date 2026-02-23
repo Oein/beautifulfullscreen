@@ -66,6 +66,7 @@ export const __defaultConfig__ = {
   artistFontSize: "auto" as ArtistFontSize,
   showClock: "disable" as ScreenBorders | "disable",
   replaceSpotifyFullscreen: false,
+  autoStart: false,
 };
 
 let config = __defaultConfig__;

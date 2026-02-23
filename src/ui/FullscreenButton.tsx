@@ -69,4 +69,6 @@ export default function FullscreenButton() {
   };
 
   handleButtonCreation();
+
+  if (get("autoStart")) setTimeout(handleButtonClick, 1000);
 }
