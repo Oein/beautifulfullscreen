@@ -53,9 +53,9 @@ export default function VolumeController() {
   useEffect(
     () =>
       addChangeListener("volumeController", () =>
-        setEnabled(get("volumeController"))
+        setEnabled(get("volumeController")),
       ),
-    []
+    [],
   );
 
   return (
@@ -65,15 +65,15 @@ export default function VolumeController() {
         " " +
         (enabled != "disable" ? style.enabled : "")
       }
-      style={{
-        ...(enabled == "right"
+      style={
+        enabled == "right"
           ? {
               left: "unset",
               right: "calc((50px + 32px) / 2)",
               transform: "translateY(-50%) translateX(50%)",
             }
-          : {}),
-      }}
+          : {}
+      }
     >
       <span
         className={style.volumeIcon}
@@ -89,10 +89,10 @@ export default function VolumeController() {
             isMuted
               ? Spicetify.SVGIcons["volume-off"]
               : volume < 0.1
-              ? Spicetify.SVGIcons["volume-one-wave"]
-              : volume < 0.5
-              ? Spicetify.SVGIcons["volume-two-wave"]
-              : Spicetify.SVGIcons["volume"]
+                ? Spicetify.SVGIcons["volume-one-wave"]
+                : volume < 0.5
+                  ? Spicetify.SVGIcons["volume-two-wave"]
+                  : Spicetify.SVGIcons["volume"]
           }
           size={24}
         />
