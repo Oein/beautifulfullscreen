@@ -14,7 +14,7 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
       addChangeListener("putMusic", () => setPutMusic(get("putMusic"))),
       addChangeListener("showLyrics", () => setShowLyrics(get("showLyrics"))),
       addChangeListener("verticalMode", () =>
-        setVerticalMode(get("verticalMode"))
+        setVerticalMode(get("verticalMode")),
       ),
     ];
 
@@ -26,14 +26,26 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
   const checkLyricsPlus = () => {
     return (
       Spicetify.Config?.custom_apps?.includes("lyrics-plus") ||
+      Spicetify.Config?.custom_apps?.includes("ivLyrics") ||
       !!document.querySelector("a[href='/lyrics-plus']")
     );
   };
+  const getLyricsPlusID = () => {
+    if (Spicetify.Config?.custom_apps?.includes("ivLyrics"))
+      return "fad-ivLyrics-container";
+    return "fad-lyrics-plus-container";
+  };
+  const getLyricsPlusPath = () => {
+    if (Spicetify.Config?.custom_apps?.includes("ivLyrics")) return "/ivLyrics";
+    return "/lyrics-plus";
+  };
   const requestLyricsPlus = () => {
+    console.log("FAD Lyrics Plus: Checking Lyrics Plus app");
     if (get("showLyrics") && checkLyricsPlus()) {
+      console.log("FAD Lyrics Plus: Requesting Lyrics Plus app2");
       lastApp.current = Spicetify.Platform.History.location.pathname;
-      if (lastApp.current !== "/lyrics-plus") {
-        Spicetify.Platform.History.push("/lyrics-plus");
+      if (lastApp.current !== getLyricsPlusPath()) {
+        Spicetify.Platform.History.push(getLyricsPlusPath());
       }
       window.dispatchEvent(new Event("fad-request"));
     }
@@ -55,24 +67,30 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
     props.open &&
     showLyrics &&
     (verticalMode ? putMusic != "center" : true) && (
-      <div
-        style={{
-          // @ts-ignore
-          "--color": "#fff",
+      <div className={s.container}>
+        <div
+          style={{
+            // @ts-ignore
+            "--color": "#fff",
 
-          // @ts-ignore
-          "--lyrics-color-active": props.textColor,
-          // @ts-ignore
-          "--lyrics-color-inactive": props.textColor + "50",
+            // @ts-ignore
+            "--lyrics-color-active": props.textColor,
+            // @ts-ignore
+            "--lyrics-color-inactive": props.textColor + "50",
 
-          left:
-            putMusic == "left" ? "50%" : putMusic == "right" ? "0px" : "unset",
-          opacity: putMusic == "center" ? 0 : 1,
-          pointerEvents: putMusic == "center" ? "none" : "auto",
-        }}
-        className={s.container}
-        id="fad-lyrics-plus-container"
-      ></div>
+            left:
+              putMusic == "left"
+                ? "50%"
+                : putMusic == "right"
+                  ? "0px"
+                  : "unset",
+            opacity: putMusic == "center" ? 0 : 1,
+            pointerEvents: putMusic == "center" ? "none" : "auto",
+          }}
+          id={getLyricsPlusID()}
+          data-fad-lyrics
+        ></div>
+      </div>
     )
   );
 }
