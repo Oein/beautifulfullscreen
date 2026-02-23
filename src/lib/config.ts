@@ -42,7 +42,7 @@ export type ScreenBorders =
   | "bottom-left"
   | "bottom-right";
 
-const __defaultConfig__ = {
+export const __defaultConfig__ = {
   trimTitle: false,
   showAllArtists: false,
   fadeAnimation: false,
@@ -65,6 +65,7 @@ const __defaultConfig__ = {
   artistFontWeight: "normal" as FontWeight,
   artistFontSize: "auto" as ArtistFontSize,
   showClock: "disable" as ScreenBorders | "disable",
+  replaceSpotifyFullscreen: false,
 };
 
 let config = __defaultConfig__;

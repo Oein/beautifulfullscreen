@@ -1,8 +1,11 @@
-import { get, set } from "../../lib/config";
+import { __defaultConfig__, get, set } from "../../lib/config";
 import Checkbox from "../components/Checkbox/Checkbox";
 import s from "./ovr0.module.css";
 
-function BooleanOption(props: { id: any; name?: string }) {
+function BooleanOption(props: {
+  id: keyof typeof __defaultConfig__;
+  name?: string;
+}) {
   const React = Spicetify.React;
   const { useState } = React;
 
@@ -25,7 +28,11 @@ function BooleanOption(props: { id: any; name?: string }) {
   );
 }
 
-function SelectOption(props: { id: any; name?: string; options: string[] }) {
+function SelectOption(props: {
+  id: keyof typeof __defaultConfig__;
+  name?: string;
+  options: string[];
+}) {
   const React = Spicetify.React;
   const { useState } = React;
 
@@ -63,6 +70,10 @@ export default function Ovr0() {
       <BooleanOption id="fadeAnimation" name="Fade Animation for background" />
       <BooleanOption id="showLyrics" name="Show lyrics" />
       <BooleanOption id="showNextSong" name="Show next song" />
+      <BooleanOption
+        id="replaceSpotifyFullscreen"
+        name="Replace Spotify fullscreen"
+      />
 
       <SelectOption
         id="background"
