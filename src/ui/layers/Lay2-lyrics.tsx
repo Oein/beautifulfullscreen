@@ -61,13 +61,19 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
       Spicetify.Platform.History.push(lastApp.current);
       window.dispatchEvent(new Event("fad-request"));
     }
-  }, [props.open]);
+  }, [props.open, putMusic, showLyrics]);
 
   return (
     props.open &&
     showLyrics &&
     (verticalMode ? putMusic != "center" : true) && (
-      <div className={s.container}>
+      <div
+        className={s.container}
+        style={{
+          left:
+            putMusic == "left" ? "50%" : putMusic == "right" ? "0px" : "unset",
+        }}
+      >
         <div
           style={{
             // @ts-ignore
@@ -78,12 +84,6 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
             // @ts-ignore
             "--lyrics-color-inactive": props.textColor + "50",
 
-            left:
-              putMusic == "left"
-                ? "50%"
-                : putMusic == "right"
-                  ? "0px"
-                  : "unset",
             opacity: putMusic == "center" ? 0 : 1,
             pointerEvents: putMusic == "center" ? "none" : "auto",
           }}
