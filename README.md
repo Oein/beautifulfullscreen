@@ -13,7 +13,18 @@ Minimal album cover art display with beautiful blur effect background. Activatin
 
 ## Supported Options
 
-![Screenshot of config page](https://raw.githubusercontent.com/Oein/beautifulfullscreen/main/images/config.png)
+- Blured cover art as background
+- lyrics-plus support (if `lyrics-plus` custom app installed)
+- ivLyrics support (if `ivlyrics` custom app installed)
+- Clock display
+- Customizable font size and color
+- Vertical mode
+- Customizable alignment (left, center, right), placement (left, center, right)
+- Controls (play/pause, next, previous) support
+- Advanced controls (shuffle, repeat) support
+- Volume control support
+- Automatic start when spotify launched
+- Replace spotify's default fullscreen button
 
 ## Installation
 
