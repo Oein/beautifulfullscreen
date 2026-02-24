@@ -7,6 +7,7 @@ import Lay1 from "./layers/Lay1-music";
 import Lay2 from "./layers/Lay2-lyrics";
 import Lay3 from "./layers/Lay3-nextMusic";
 import Lay4 from "./layers/Lay4-clock";
+import ExternalSupport from "./lib/ExternalSupport";
 
 export default function UI() {
   const React = Spicetify.React;
@@ -79,6 +80,8 @@ export default function UI() {
       <Lay2 open={open} textColor={color} />
       <Lay3 />
       <Lay4 />
+
+      <ExternalSupport open={open} />
     </div>
   );
 }
