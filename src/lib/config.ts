@@ -1,4 +1,4 @@
-// export type Fit50 = "Disalbed" | "When overflow" | "Always";
+// export type Fit50 = "Disabled" | "When overflow" | "Always";
 export type ArtistFontSize =
   | "auto"
   | "32px"
@@ -29,7 +29,7 @@ export type FontWeight =
   | "950";
 export type Background =
   | "Cover"
-  | "Deasturated"
+  | "Desaturated"
   | "Light Vibrant"
   | "Vibrant"
   | "Vibrant non alarming"
@@ -41,6 +41,8 @@ export type ScreenBorders =
   | "top-right"
   | "bottom-left"
   | "bottom-right";
+
+const STORAGE_KEY = "beautiful-fullscreen";
 
 export const __defaultConfig__ = {
   trimTitle: false,
@@ -67,32 +69,40 @@ export const __defaultConfig__ = {
   showClock: "disable" as ScreenBorders | "disable",
   replaceSpotifyFullscreen: false,
   autoStart: false,
-};
+} as const;
 
-let config = __defaultConfig__;
+type Config = { -readonly [K in keyof typeof __defaultConfig__]: (typeof __defaultConfig__)[K] };
 
-export function loadConfig() {
-  let saved = Spicetify.LocalStorage.get("beautiful-fullscreen");
-  if (typeof saved != "string") {
-    Spicetify.LocalStorage.set("beautiful-fullscreen", JSON.stringify(config));
-    saved = JSON.stringify(config);
+let config: Config = { ...__defaultConfig__ };
+
+export function loadConfig(): void {
+  let saved = Spicetify.LocalStorage.get(STORAGE_KEY);
+  if (typeof saved !== "string") {
+    Spicetify.LocalStorage.set(STORAGE_KEY, JSON.stringify(config));
+    return;
   }
 
-  const parsed = JSON.parse(saved);
-  config = { ...__defaultConfig__, ...parsed };
+  try {
+    const parsed = JSON.parse(saved);
+    config = { ...__defaultConfig__, ...parsed };
+  } catch {
+    config = { ...__defaultConfig__ };
+  }
 }
 
-const changeListeners: { [key: string]: (() => void)[] } = {};
+const changeListeners: Partial<
+  Record<keyof typeof __defaultConfig__, (() => void)[]>
+> = {};
 
 export function addChangeListener<K extends keyof typeof __defaultConfig__>(
   key: K,
   callback: () => void
-) {
+): () => void {
   if (!changeListeners[key]) changeListeners[key] = [];
-  changeListeners[key].push(callback);
+  changeListeners[key]!.push(callback);
 
   return () => {
-    changeListeners[key] = changeListeners[key].filter((cb) => cb !== callback);
+    changeListeners[key] = changeListeners[key]!.filter((cb) => cb !== callback);
   };
 }
 
@@ -105,10 +115,8 @@ export function get<K extends keyof typeof __defaultConfig__>(
 export function set<K extends keyof typeof __defaultConfig__>(
   key: K,
   value: (typeof __defaultConfig__)[K]
-) {
+): void {
   config[key] = value;
-  Spicetify.LocalStorage.set("beautiful-fullscreen", JSON.stringify(config));
-  if (changeListeners[key]) {
-    changeListeners[key].forEach((cb) => cb());
-  }
+  Spicetify.LocalStorage.set(STORAGE_KEY, JSON.stringify(config));
+  changeListeners[key]?.forEach((cb) => cb());
 }

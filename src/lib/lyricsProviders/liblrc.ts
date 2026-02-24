@@ -12,32 +12,24 @@ export interface LibLRCResponse {
   syncedLyrics?: string;
 }
 
-export async function getLiblrcLyrics(trackInfo: TrackInfo) {
-  const baseURL = "https://lrclib.net/api/get";
-  const durr = trackInfo.duration / 1000;
-  const params = {
-    track_name: trackInfo.title,
-    artist_name: trackInfo.artist,
-    album_name: trackInfo.album,
-    duration: durr,
-  };
+export async function getLiblrcLyrics(
+  trackInfo: TrackInfo
+): Promise<LibLRCResponse | { error: string; uri: string }> {
+  const url = new URL("https://lrclib.net/api/get");
+  url.searchParams.set("track_name", trackInfo.title);
+  url.searchParams.set("artist_name", trackInfo.artist);
+  url.searchParams.set("album_name", trackInfo.album);
+  url.searchParams.set("duration", String(trackInfo.duration / 1000));
 
-  const finalURL = `${baseURL}?${Object.keys(params)
-    .map((key) => `${key}=${encodeURIComponent((params as any)[key])}`)
-    .join("&")}`;
-
-  const body = await fetch(finalURL, {
+  const response = await fetch(url.toString(), {
     headers: {
       "x-user-agent": `spicetify v${Spicetify.Config.version} (https://github.com/spicetify/cli)`,
     },
   });
 
-  if (body.status !== 200) {
-    return {
-      error: "Request error: Track wasn't found",
-      uri: trackInfo.uri,
-    };
+  if (response.status !== 200) {
+    return { error: "Request error: Track wasn't found", uri: trackInfo.uri };
   }
 
-  return (await body.json()) as LibLRCResponse;
+  return (await response.json()) as LibLRCResponse;
 }

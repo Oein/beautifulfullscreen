@@ -1,59 +1,54 @@
-import { useRef, type MouseEventHandler } from "react";
+import type { CSSProperties, MouseEventHandler } from "react";
 
-import Lay0 from "./layers/Lay0-background";
+import BackgroundLayer from "./layers/Lay0-background";
 import s from "./ui.module.css";
-import Ovr0 from "./layers/Ovr0-config";
-import Lay1 from "./layers/Lay1-music";
-import Lay2 from "./layers/Lay2-lyrics";
-import Lay3 from "./layers/Lay3-nextMusic";
-import Lay4 from "./layers/Lay4-clock";
+import ConfigOverlay from "./layers/Ovr0-config";
+import MusicLayer from "./layers/Lay1-music";
+import LyricsLayer from "./layers/Lay2-lyrics";
+import NextMusicLayer from "./layers/Lay3-nextMusic";
+import ClockLayer from "./layers/Lay4-clock";
 import ExternalSupport from "./lib/ExternalSupport";
 
 export default function UI() {
   const React = Spicetify.React;
+  const { useEffect, useState, useRef } = React;
   const ReactDOM = Spicetify.ReactDOM;
-  const { useEffect, useState } = React;
 
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [pointerShown, setPointerShown] = useState(true);
+  const pointerTimeout = useRef(null as number | null);
 
   useEffect(() => {
-    window.bfsCallback = () => {
-      setOpen(window.bfsOpen);
-    };
+    window.bfsCallback = () => setOpen(window.bfsOpen);
     setOpen(window.bfsOpen);
-
-    window.setBFScolor = (color: string) => {
-      setColor(color);
-    };
+    window.setBFScolor = (c: string) => setColor(c);
   }, []);
 
   useEffect(() => {
     if (open) document.documentElement.requestFullscreen();
   }, [open]);
 
-  const doubleClickCallback = () => {
+  const handleDoubleClick = () => {
     setOpen(false);
     document.exitFullscreen();
   };
-  const oncontextmenu: MouseEventHandler = (e) => {
+
+  const handleContextMenu: MouseEventHandler = (e) => {
     e.preventDefault();
     const modalContainer = document.createElement("div");
-    ReactDOM.render(React.createElement(Ovr0, {}), modalContainer);
-
+    ReactDOM.createRoot(modalContainer).render(
+      React.createElement(ConfigOverlay, {}),
+    );
     Spicetify.PopupModal.display({
       title: "Config",
       content: modalContainer,
     });
   };
 
-  const pointerTimeout = useRef<number | null>(null);
-  const pointerMove = () => {
+  const handlePointerMove = () => {
     setPointerShown(true);
-    if (pointerTimeout.current) {
-      clearTimeout(pointerTimeout.current);
-    }
+    if (pointerTimeout.current) clearTimeout(pointerTimeout.current);
     pointerTimeout.current = window.setTimeout(() => {
       setPointerShown(false);
     }, 2000);
@@ -61,26 +56,26 @@ export default function UI() {
 
   return (
     <div
-      style={{
-        transform: `translateY(${open ? "0" : "100"}px)`,
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? "auto" : "none",
-        color,
-        cursor: pointerShown ? "default" : "none",
-        // @ts-ignore
-        "--color": color,
-      }}
+      style={
+        {
+          transform: `translateY(${open ? "0" : "100"}px)`,
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+          color,
+          cursor: pointerShown ? "default" : "none",
+          "--color": color,
+        } as CSSProperties
+      }
       className={s.bfs}
-      onDoubleClick={doubleClickCallback}
-      onContextMenu={oncontextmenu}
-      onPointerMove={pointerMove}
+      onDoubleClick={handleDoubleClick}
+      onContextMenu={handleContextMenu}
+      onPointerMove={handlePointerMove}
     >
-      <Lay0 />
-      <Lay1 />
-      <Lay2 open={open} textColor={color} />
-      <Lay3 />
-      <Lay4 />
-
+      <BackgroundLayer />
+      <MusicLayer />
+      <LyricsLayer open={open} textColor={color} />
+      <NextMusicLayer />
+      <ClockLayer />
       <ExternalSupport open={open} />
     </div>
   );

@@ -1,55 +1,55 @@
+import type { ChangeEvent } from "react";
 import { __defaultConfig__, get, set } from "../../lib/config";
 import Checkbox from "../components/Checkbox/Checkbox";
 import s from "./ovr0.module.css";
 
-function BooleanOption(props: {
-  id: keyof typeof __defaultConfig__;
-  name?: string;
-}) {
+type ConfigKey = keyof typeof __defaultConfig__;
+
+function BooleanOption({ id, name }: { id: ConfigKey; name?: string }) {
   const React = Spicetify.React;
   const { useState } = React;
-
-  const [value, setValue] = useState(get(props.id));
+  const [value, setValue] = useState(get(id) as boolean);
+  const label = name ?? id;
 
   const handleChange = () => {
-    setValue(!value);
-    (set as any)(props.id, !value);
+    const next = !value;
+    setValue(next);
+    (set as (k: ConfigKey, v: boolean) => void)(id, next);
   };
 
   return (
     <div className={s.option}>
-      <label>{props.name || props.id}</label>
-      <Checkbox
-        checked={value}
-        onChange={handleChange}
-        label={props.name || props.id}
-      />
+      <label>{label}</label>
+      <Checkbox checked={value} onChange={handleChange} label={label} />
     </div>
   );
 }
 
-function SelectOption(props: {
-  id: keyof typeof __defaultConfig__;
+function SelectOption({
+  id,
+  name,
+  options,
+}: {
+  id: ConfigKey;
   name?: string;
   options: string[];
 }) {
   const React = Spicetify.React;
   const { useState } = React;
+  const [value, setValue] = useState(get(id) as string);
 
-  const [value, setValue] = useState(get(props.id));
-
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setValue(e.target.value);
-    (set as any)(props.id, e.target.value);
+    (set as (k: ConfigKey, v: string) => void)(id, e.target.value);
   };
 
   return (
     <div className={s.option}>
-      <div className={s.optname}>{props.name || props.id}</div>
+      <div className={s.optname}>{name ?? id}</div>
       <div className={s.selectContainer}>
         <div className={s.selectWrapper}>
           <select value={value} onChange={handleChange} className={s.select}>
-            {props.options.map((opt) => (
+            {options.map((opt) => (
               <option key={opt} value={opt}>
                 {opt}
               </option>
@@ -61,9 +61,8 @@ function SelectOption(props: {
   );
 }
 
-export default function Ovr0() {
+export default function ConfigOverlay() {
   const React = Spicetify.React;
-
   return (
     <div className={s.container}>
       <div className={s.title + " " + s.nouppad}>UI</div>
@@ -80,7 +79,7 @@ export default function Ovr0() {
         name="Background"
         options={[
           "Cover",
-          "Deasturated",
+          "Desaturated",
           "Light Vibrant",
           "Vibrant",
           "Vibrant non alarming",
@@ -125,7 +124,7 @@ export default function Ovr0() {
       />
 
       <div className={s.title}>Title</div>
-      <BooleanOption id="trimTitle" name="Trim Ttile" />
+      <BooleanOption id="trimTitle" name="Trim Title" />
       <SelectOption
         id="titleFontWeight"
         name="Title font weight"

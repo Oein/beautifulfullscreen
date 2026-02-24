@@ -1,11 +1,11 @@
+import { useConfigs } from "../../../../lib/useConfig";
 import ButtonIcon from "./ButtonIcon";
 import DisplayIcon from "../DisplayIcon";
 import ProgressBar from "./ProgressBar";
 import style from "./controller.module.css";
-import { addChangeListener, get } from "../../../../lib/config";
 
-function SimpleController(props: { playing: boolean }) {
-  const { React } = Spicetify;
+function SimpleController({ playing }: { playing: boolean }) {
+  const React = Spicetify.React;
   return (
     <div className={style.playpause}>
       <ButtonIcon
@@ -13,9 +13,7 @@ function SimpleController(props: { playing: boolean }) {
         onClick={Spicetify.Player.back}
       />
       <ButtonIcon
-        icon={
-          props.playing ? Spicetify.SVGIcons.pause : Spicetify.SVGIcons.play
-        }
+        icon={playing ? Spicetify.SVGIcons.pause : Spicetify.SVGIcons.play}
         onClick={Spicetify.Player.togglePlay}
       />
       <ButtonIcon
@@ -26,42 +24,45 @@ function SimpleController(props: { playing: boolean }) {
   );
 }
 
-function OnOffIconButton(props: {
+function OnOffIconButton({
+  icon,
+  onClick,
+  enabled = true,
+}: {
   icon: string;
-  onClick: () => any;
+  onClick: () => void;
   enabled?: boolean;
 }) {
-  const { React } = Spicetify;
+  const React = Spicetify.React;
   return (
     <button
-      className={style.onoffbtn + " " + (props.enabled ? "" : style.disabled)}
+      className={`${style.onoffbtn} ${enabled ? "" : style.disabled}`}
       onClick={(e) => {
-        if (props.onClick) {
-          props.onClick();
-          e.stopPropagation();
-          e.preventDefault();
-        }
+        onClick();
+        e.stopPropagation();
+        e.preventDefault();
       }}
     >
-      <DisplayIcon icon={props.icon} size={20} />
+      <DisplayIcon icon={icon} size={20} />
     </button>
   );
 }
 
-function AdvancedController(props: { playing: boolean }) {
-  const { React } = Spicetify;
+function AdvancedController({ playing }: { playing: boolean }) {
+  const React = Spicetify.React;
   const { useState, useEffect } = React;
+
   const [shuffle, setShuffle] = useState(Spicetify.Player.getShuffle());
   const [repeat, setRepeat] = useState(Spicetify.Player.getRepeat());
   const [heart, setHeart] = useState(Spicetify.Player.getHeart());
 
   useEffect(() => {
-    const inter = setInterval(() => {
+    const interval = setInterval(() => {
       setShuffle(Spicetify.Player.getShuffle());
       setRepeat(Spicetify.Player.getRepeat());
       setHeart(Spicetify.Player.getHeart());
     }, 100);
-    return () => clearInterval(inter);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -71,25 +72,25 @@ function AdvancedController(props: { playing: boolean }) {
           icon={Spicetify.SVGIcons.shuffle}
           onClick={() => {
             Spicetify.Player.toggleShuffle();
-            setShuffle((v: any) => !v);
+            setShuffle((v: boolean) => !v);
           }}
           enabled={shuffle}
         />
         <OnOffIconButton
           icon={
-            repeat == 2
+            repeat === 2
               ? Spicetify.SVGIcons["repeat-once"]
               : Spicetify.SVGIcons["repeat"]
           }
           onClick={() => {
             Spicetify.Player.toggleRepeat();
-            setRepeat((v: any) => (v + 1) % 3);
+            setRepeat((v: number) => (v + 1) % 3);
           }}
           enabled={repeat > 0}
         />
       </div>
       <div className={style.centera}>
-        <SimpleController playing={props.playing} />
+        <SimpleController playing={playing} />
       </div>
       <div className={style.righta}>
         <ButtonIcon
@@ -100,7 +101,7 @@ function AdvancedController(props: { playing: boolean }) {
           }
           onClick={() => {
             Spicetify.Player.toggleHeart();
-            setHeart((v: any) => !v);
+            setHeart((v: boolean) => !v);
           }}
         />
       </div>
@@ -109,54 +110,40 @@ function AdvancedController(props: { playing: boolean }) {
 }
 
 export default function Controller() {
-  const { React } = Spicetify;
+  const React = Spicetify.React;
   const { useState, useEffect } = React;
-  const names = Spicetify.classnames;
+  const classnames = Spicetify.classnames;
 
   const [playing, setPlaying] = useState(Spicetify.Player.isPlaying());
-  const [useAdvancedController, setUseAdvancedController] = useState(
-    get("advancedController")
-  );
-  useEffect(() => {
-    const update = ({ data }: any) => setPlaying(!data.isPaused);
-    Spicetify.Player.addEventListener("onplaypause", update);
-    return () => Spicetify.Player.removeEventListener("onplaypause", update);
-  }, []);
 
-  const [showProgressBar, setShowProgressBar] = useState(
-    get("enableProgressbar")
-  );
-  const [showController, setShowController] = useState(get("enableController"));
+  const config = useConfigs([
+    "enableProgressbar",
+    "enableController",
+    "advancedController",
+  ] as const);
 
   useEffect(() => {
-    const update = () => {
-      setShowProgressBar(get("enableProgressbar"));
-      setShowController(get("enableController"));
-      setUseAdvancedController(get("advancedController"));
-    };
-    addChangeListener("enableProgressbar", update);
-    addChangeListener("enableController", update);
-    addChangeListener("advancedController", update);
-    return () => {
-      Spicetify.Player.removeEventListener("enableProgressbar", update);
-    };
+    const onPlayPause = ({ data }: any) => setPlaying(!data.isPaused);
+    Spicetify.Player.addEventListener("onplaypause", onPlayPause);
+    return () =>
+      Spicetify.Player.removeEventListener("onplaypause", onPlayPause);
   }, []);
 
   return (
     <div
-      className={names(
+      className={classnames(
         style.controllerContainer,
-        useAdvancedController && style.advanced
+        config.advancedController && style.advanced,
       )}
-      x-type={useAdvancedController ? "advanced" : "simple"}
+      x-type={config.advancedController ? "advanced" : "simple"}
     >
-      {showController &&
-        (useAdvancedController ? (
+      {config.enableController &&
+        (config.advancedController ? (
           <AdvancedController playing={playing} />
         ) : (
           <SimpleController playing={playing} />
         ))}
-      {showProgressBar && <ProgressBar />}
+      {config.enableProgressbar && <ProgressBar />}
     </div>
   );
 }

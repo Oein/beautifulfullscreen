@@ -1,208 +1,181 @@
 import bgrgb2fgcolor, { hex2rgb } from "../../lib/colors";
-import { addChangeListener, get } from "../../lib/config";
+import { get } from "../../lib/config";
+import { useConfig } from "../../lib/useConfig";
 import s from "./lay0.module.css";
 
-export default function Lay0() {
+type ColorMap = Record<
+  | "Desaturated"
+  | "Light Vibrant"
+  | "Prominent"
+  | "Vibrant"
+  | "Vibrant non alarming",
+  string
+>;
+
+const DEFAULT_COLORS: ColorMap = {
+  Desaturated: "#000",
+  "Light Vibrant": "#000",
+  Prominent: "#000",
+  Vibrant: "#000",
+  "Vibrant non alarming": "#000",
+};
+
+const BLUR = 30;
+
+export default function BackgroundLayer() {
   const React = Spicetify.React;
   const { useEffect, useState, useRef } = React;
 
-  const [colors, setColors] = useState({
-    Deasturated: "#000",
-    "Light Vibrant": "#000",
-    Prominent: "#000",
-    Vibrant: "#000",
-    "Vibrant non alarming": "#000",
-  });
-  const [colorType, setColorType] = useState(get("background"));
+  const [colors, setColors] = useState<ColorMap>(DEFAULT_COLORS);
+  const colorType = useConfig("background");
 
-  const canvasRef = useRef(null);
-  const lastImg = useRef(null);
-  const lastURL = useRef(null);
+  const canvasRef = useRef(null as HTMLCanvasElement | null);
+  const lastImg = useRef(null as HTMLImageElement | null);
+  const lastURL = useRef("");
 
-  const lastColorType = useRef("");
-
+  // Update text color based on background type
   useEffect(() => {
     try {
-      if (colorType != "Cover") {
-        const hexColor =
-          colors[colorType == "Cover" ? "Vibrant non alarming" : colorType];
-        console.log(
-          "CT",
-          colorType == "Cover" ? "Vibrant non alarming" : colorType
-        );
-        console.log("HEX", hexColor, colors);
+      if (colorType !== "Cover") {
+        const hexColor = colors[colorType];
         const textColor = bgrgb2fgcolor(hex2rgb(hexColor));
-        console.log("TC", textColor);
-
         window?.setBFScolor(textColor);
       } else {
         window?.setBFScolor("#ffffff");
       }
-    } catch (e) {}
+    } catch {
+      // Color extraction may fail for some images
+    }
   }, [colorType, colors]);
 
+  // Listen for song changes and update cover/colors
   useEffect(() => {
-    const songChangeListener: any = async () => {
-      if (!Spicetify.Player.data) return console.log("No song playing");
+    const onSongChange = async () => {
+      if (!Spicetify.Player.data) return;
+
       const coverURL = Spicetify.Player.data.item.metadata.image_xlarge_url;
       lastURL.current = coverURL;
-      handleCanvas(coverURL);
-      const colors: any = await Spicetify.colorExtractor(coverURL);
+      drawCover(coverURL);
+
+      const extracted: Record<string, string> =
+        await Spicetify.colorExtractor(coverURL);
       setColors({
-        Deasturated: colors.DESATURATED || colors.undefined,
-        "Light Vibrant": colors.LIGHT_VIBRANT || colors.undefined,
-        Prominent: colors.PROMINENT || colors.undefined,
-        Vibrant: colors.VIBRANT || colors.undefined,
-        "Vibrant non alarming": colors.VIBRANT_NON_ALARMING || colors.undefined,
+        Desaturated: extracted.DESATURATED ?? extracted.undefined,
+        "Light Vibrant": extracted.LIGHT_VIBRANT ?? extracted.undefined,
+        Prominent: extracted.PROMINENT ?? extracted.undefined,
+        Vibrant: extracted.VIBRANT ?? extracted.undefined,
+        "Vibrant non alarming":
+          extracted.VIBRANT_NON_ALARMING ?? extracted.undefined,
       });
     };
 
-    const rmv = addChangeListener("background", () => {
-      if (get("background") == "Cover" && lastColorType.current != "Cover") {
-        lastColorType.current = "Cover";
-        songChangeListener();
-      } else {
-        lastColorType.current = get("background");
-      }
-    });
-
-    // initial call for the first song on load
-    songChangeListener();
-    Spicetify.Player.addEventListener("songchange", songChangeListener);
-    return () => [
-      rmv(),
-      Spicetify.Player.removeEventListener("songchange", songChangeListener),
-    ];
+    onSongChange();
+    Spicetify.Player.addEventListener("songchange", onSongChange);
+    return () => {
+      Spicetify.Player.removeEventListener("songchange", onSongChange);
+    };
   }, []);
 
-  useEffect(
-    () =>
-      addChangeListener("background", () => {
-        setColorType(get("background"));
-      }),
-    []
-  );
-
+  // Redraw canvas on window resize (debounced)
   useEffect(() => {
-    let timeo: number | null;
-    let lcall = 0;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    let lastCall = 0;
+
     const handleResize = () => {
       const now = Date.now();
-      if (now - lcall < 50) {
-        if (timeo) clearTimeout(timeo);
-        timeo = setTimeout(() => {
-          handleCanvas(lastURL.current);
-          timeo = null;
+      if (now - lastCall < 50) {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          drawCover(lastURL.current);
+          timeout = null;
         }, 50);
       } else {
-        handleCanvas(lastURL.current);
+        drawCover(lastURL.current);
       }
-      lcall = now;
+      lastCall = now;
     };
+
     window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const prepareCanvas = () => {
-    const canv = canvasRef.current;
-    if (!canv) {
-      console.error("Failed to get canvas");
-      return;
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+
     const { innerWidth: width, innerHeight: height } = window;
-    canv.width = width;
-    canv.height = height;
+    canvas.width = width;
+    canvas.height = height;
 
-    const ctx = canv.getContext("2d");
-    if (!ctx) {
-      console.error("Failed to get context");
-      return;
-    }
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
     ctx.imageSmoothingEnabled = false;
-    ctx.filter = "blur(30px) brightness(0.6)";
-    const blur = 30;
+    ctx.filter = `blur(${BLUR}px) brightness(0.6)`;
 
-    const x = -blur * 2;
-
-    let y: number;
-    let dim: number;
-
-    if (width > height) {
-      dim = width;
-      y = x - (width - height) / 2;
-    } else {
-      dim = height;
-      y = x;
-    }
-
-    const size = dim + 4 * blur;
+    const offset = -BLUR * 2;
+    const maxDim = Math.max(width, height);
+    const y = width > height ? offset - (width - height) / 2 : offset;
+    const size = maxDim + 4 * BLUR;
 
     ctx.globalAlpha = 1;
-
-    return { size, x, y, ctx };
+    return { size, x: offset, y, ctx };
   };
 
   const animateCanvas = (newImage: HTMLImageElement) => {
-    let lastImage = (lastImg.current || newImage).cloneNode(
-      true
+    const previousImage = (lastImg.current ?? newImage).cloneNode(
+      true,
     ) as HTMLImageElement;
+    const prepared = prepareCanvas();
+    if (!prepared) return;
 
-    const dt = prepareCanvas();
-    if (!dt) return;
-    const { size, x, y, ctx } = dt;
-
+    const { size, x, y, ctx } = prepared;
     lastImg.current = newImage;
 
-    let factor = 0.0;
+    let progress = 0;
     const animate = () => {
       ctx.globalAlpha = 1;
-      ctx.drawImage(lastImage, x, y, size, size);
-      ctx.globalAlpha = Math.sin((Math.PI / 2) * factor);
-
-      //   console.log("animate", ctx.globalAlpha);
+      ctx.drawImage(previousImage, x, y, size, size);
+      ctx.globalAlpha = Math.sin((Math.PI / 2) * progress);
       ctx.drawImage(newImage, x, y, size, size);
 
-      if (factor < 1.0) {
-        factor += 0.016;
+      if (progress < 1) {
+        progress += 0.016;
         requestAnimationFrame(animate);
       }
     };
-
     requestAnimationFrame(animate);
   };
 
-  const handleCanvas = (coverUrl: string) => {
+  const drawCover = (coverUrl: string) => {
+    if (!coverUrl) return;
+
     const img = new Image();
     img.src = coverUrl;
     img.onload = () => {
-      const dt = prepareCanvas();
       window?.setBFScolor("#ffffff");
-      if (!dt) return;
+      const prepared = prepareCanvas();
+      if (!prepared) return;
+
       if (get("fadeAnimation")) {
         animateCanvas(img);
       } else {
-        const { size, x, y, ctx } = dt;
+        const { size, x, y, ctx } = prepared;
         ctx.drawImage(img, x, y, size, size);
         lastImg.current = img;
       }
-      return;
     };
     img.onerror = (e) => {
-      console.error("Failed to load image", e, coverUrl);
+      console.error("Failed to load cover image", e, coverUrl);
     };
   };
 
+  const resolvedColorType =
+    colorType === "Cover" ? "Vibrant non alarming" : colorType;
+
   return (
-    <div
-      className={s.lay0}
-      style={{
-        background:
-          colors[colorType == "Cover" ? "Vibrant non alarming" : colorType],
-      }}
-    >
-      {colorType == "Cover" && <canvas className={s.lay0} ref={canvasRef} />}
+    <div className={s.lay0} style={{ background: colors[resolvedColorType] }}>
+      {colorType === "Cover" && <canvas className={s.lay0} ref={canvasRef} />}
     </div>
   );
 }

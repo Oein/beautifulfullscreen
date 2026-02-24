@@ -1,32 +1,39 @@
-import { addChangeListener, get } from "../../../../lib/config";
+import { useConfig } from "../../../../lib/useConfig";
 import DisplayIcon from "../DisplayIcon";
 import style from "./VolumeController.module.css";
 
+function getVolumeIcon(volume: number, isMuted: boolean): string {
+  if (isMuted) return Spicetify.SVGIcons["volume-off"];
+  if (volume < 0.1) return Spicetify.SVGIcons["volume-one-wave"];
+  if (volume < 0.5) return Spicetify.SVGIcons["volume-two-wave"];
+  return Spicetify.SVGIcons["volume"];
+}
+
 export default function VolumeController() {
-  const { React } = Spicetify;
+  const React = Spicetify.React;
   const { useState, useEffect, useRef } = React;
+
   const [volume, setVolume] = useState(Spicetify.Player.getVolume());
   const [isMuted, setIsMuted] = useState(Spicetify.Player.getMute());
-  const [enabled, setEnabled] = useState(get("volumeController"));
+  const enabled = useConfig("volumeController");
   const mouseDown = useRef(false);
+  const sliderRef = useRef(null as HTMLDivElement | null);
 
-  const sliderRef = useRef(null);
+  const handleSliderClick = (e: MouseEvent) => {
+    const slider = sliderRef.current;
+    if (!slider) return;
 
-  const onClick = (e: MouseEvent) => {
-    if (sliderRef.current == null) return;
-    const rect = sliderRef.current.getBoundingClientRect();
+    const rect = slider.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const height = sliderRef.current.clientHeight;
-    let volume = 1 - y / height;
-    if (volume > 1) volume = 1;
-    if (volume < 0) volume = 0;
-    // console.log(y, height);
-    Spicetify.Player.setVolume(volume);
-    setVolume(volume);
-    if (volume === 0) setIsMuted(true);
-    else setIsMuted(false);
+    let newVolume = 1 - y / slider.clientHeight;
+    newVolume = Math.max(0, Math.min(1, newVolume));
+
+    Spicetify.Player.setVolume(newVolume);
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
   };
 
+  // Poll volume/mute state
   useEffect(() => {
     const interval = setInterval(() => {
       setVolume(Spicetify.Player.getVolume());
@@ -35,81 +42,58 @@ export default function VolumeController() {
     return () => clearInterval(interval);
   }, []);
 
+  // Global mouse listeners for drag behavior
   useEffect(() => {
-    const mouseUpListener = () => {
+    const onMouseUp = () => {
       mouseDown.current = false;
     };
-    const mouseMoveListener = (e: MouseEvent) => {
-      if (mouseDown.current) onClick(e as any);
+    const onMouseMove = (e: MouseEvent) => {
+      if (mouseDown.current) handleSliderClick(e);
     };
-    document.addEventListener("mouseup", mouseUpListener);
-    document.addEventListener("mousemove", mouseMoveListener);
+    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("mousemove", onMouseMove);
     return () => {
-      document.removeEventListener("mouseup", mouseUpListener);
-      document.removeEventListener("mousemove", mouseMoveListener);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
-  useEffect(
-    () =>
-      addChangeListener("volumeController", () =>
-        setEnabled(get("volumeController")),
-      ),
-    [],
-  );
+  const toggleMute = () => {
+    setIsMuted((m: boolean) => {
+      Spicetify.Player.setMute(!m);
+      return !m;
+    });
+  };
+
+  const isEnabled = enabled !== "disable";
+  const positionStyle =
+    enabled === "right"
+      ? {
+          left: "unset",
+          right: "calc((50px + 32px) / 2)",
+          transform: "translateY(-50%) translateX(50%)",
+        }
+      : {};
 
   return (
     <div
-      className={
-        style.volumeController +
-        " " +
-        (enabled != "disable" ? style.enabled : "")
-      }
-      style={
-        enabled == "right"
-          ? {
-              left: "unset",
-              right: "calc((50px + 32px) / 2)",
-              transform: "translateY(-50%) translateX(50%)",
-            }
-          : {}
-      }
+      className={`${style.volumeController} ${isEnabled ? style.enabled : ""}`}
+      style={positionStyle}
     >
-      <span
-        className={style.volumeIcon}
-        onClick={() => {
-          setIsMuted((m: any) => {
-            Spicetify.Player.setMute(!m);
-            return !m;
-          });
-        }}
-      >
-        <DisplayIcon
-          icon={
-            isMuted
-              ? Spicetify.SVGIcons["volume-off"]
-              : volume < 0.1
-                ? Spicetify.SVGIcons["volume-one-wave"]
-                : volume < 0.5
-                  ? Spicetify.SVGIcons["volume-two-wave"]
-                  : Spicetify.SVGIcons["volume"]
-          }
-          size={24}
-        />
+      <span className={style.volumeIcon} onClick={toggleMute}>
+        <DisplayIcon icon={getVolumeIcon(volume, isMuted)} size={24} />
       </span>
 
       <div
         className={style.volumeSlider}
-        onClick={onClick as any}
+        onClick={handleSliderClick as any}
         onMouseDown={() => (mouseDown.current = true)}
         ref={sliderRef}
       >
         <div
           className={style.volumeInner}
-          style={{
-            height: `${volume * 100}%`,
-          }}
-        ></div>
+          style={{ height: `${volume * 100}%` }}
+        />
       </div>
     </div>
   );

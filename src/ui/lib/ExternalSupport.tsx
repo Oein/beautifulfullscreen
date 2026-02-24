@@ -1,17 +1,18 @@
-export default function ExternalSupport(props: { open: boolean }) {
-  const React = Spicetify.React;
-
-  if (!open) return <></>;
-  const styles = [
-    `
-.lyrics-lyricsContainer-LyricsContainer.fad-enabled .lyrics-lyricsContainer-LyricsLine {
+const EXTERNAL_STYLES = [
+  `.lyrics-lyricsContainer-LyricsContainer.fad-enabled .lyrics-lyricsContainer-LyricsLine {
   margin-right: 15px !important;
+  margin-left: 15px !important;
 }`,
-  ];
+] as const;
+
+export default function ExternalSupport({ open }: { open: boolean }) {
+  const React = Spicetify.React;
+  if (!open) return null;
+
   return (
     <>
-      {styles.map((style, index) => (
-        <style key={index}>{style}</style>
+      {EXTERNAL_STYLES.map((css, index) => (
+        <style key={index}>{css}</style>
       ))}
     </>
   );

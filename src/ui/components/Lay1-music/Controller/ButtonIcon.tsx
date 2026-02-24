@@ -1,23 +1,23 @@
 import DisplayIcon from "../DisplayIcon";
 import style from "./buttonicon.module.css";
 
-export default function ButtonIcon(props: {
+interface ButtonIconProps {
   onClick?: () => void;
   icon: string;
-}) {
-  const { React } = Spicetify;
+}
+
+export default function ButtonIcon({ onClick, icon }: ButtonIconProps) {
+  const React = Spicetify.React;
   return (
     <button
       onClick={(e) => {
-        if (props.onClick) {
-          props.onClick();
-          e.stopPropagation();
-          e.preventDefault();
-        }
+        onClick?.();
+        e.stopPropagation();
+        e.preventDefault();
       }}
       className={style.button}
     >
-      <DisplayIcon icon={props.icon} size={20} />
+      <DisplayIcon icon={icon} size={20} />
     </button>
   );
 }

@@ -1,48 +1,45 @@
-import { addChangeListener, get } from "../../lib/config";
+import type { CSSProperties } from "react";
+import { useConfigs } from "../../lib/useConfig";
 import s from "./lay2.module.css";
 
-export default function Lay2(props: { open: boolean; textColor: string }) {
+interface LyricsLayerProps {
+  open: boolean;
+  textColor: string;
+}
+
+function hasLyricsPlusApp(): boolean {
+  return (
+    Spicetify.Config?.custom_apps?.includes("lyrics-plus") ||
+    Spicetify.Config?.custom_apps?.includes("ivLyrics") ||
+    !!document.querySelector("a[href='/lyrics-plus']")
+  );
+}
+
+function getLyricsPlusContainerId(): string {
+  if (Spicetify.Config?.custom_apps?.includes("ivLyrics"))
+    return "fad-ivLyrics-container";
+  return "fad-lyrics-plus-container";
+}
+
+function getLyricsPlusPath(): string {
+  if (Spicetify.Config?.custom_apps?.includes("ivLyrics")) return "/ivLyrics";
+  return "/lyrics-plus";
+}
+
+export default function LyricsLayer({ open, textColor }: LyricsLayerProps) {
   const React = Spicetify.React;
-  const { useEffect, useState, useRef } = React;
+  const { useEffect, useRef } = React;
 
-  const [putMusic, setPutMusic] = useState(get("putMusic"));
-  const [showLyrics, setShowLyrics] = useState(get("showLyrics"));
-  const [verticalMode, setVerticalMode] = useState(get("verticalMode"));
-
-  useEffect(() => {
-    const rm = [
-      addChangeListener("putMusic", () => setPutMusic(get("putMusic"))),
-      addChangeListener("showLyrics", () => setShowLyrics(get("showLyrics"))),
-      addChangeListener("verticalMode", () =>
-        setVerticalMode(get("verticalMode")),
-      ),
-    ];
-
-    return () => rm.forEach((f) => f());
-  }, []);
+  const { putMusic, showLyrics, verticalMode } = useConfigs([
+    "putMusic",
+    "showLyrics",
+    "verticalMode",
+  ] as const);
 
   const lastApp = useRef("");
 
-  const checkLyricsPlus = () => {
-    return (
-      Spicetify.Config?.custom_apps?.includes("lyrics-plus") ||
-      Spicetify.Config?.custom_apps?.includes("ivLyrics") ||
-      !!document.querySelector("a[href='/lyrics-plus']")
-    );
-  };
-  const getLyricsPlusID = () => {
-    if (Spicetify.Config?.custom_apps?.includes("ivLyrics"))
-      return "fad-ivLyrics-container";
-    return "fad-lyrics-plus-container";
-  };
-  const getLyricsPlusPath = () => {
-    if (Spicetify.Config?.custom_apps?.includes("ivLyrics")) return "/ivLyrics";
-    return "/lyrics-plus";
-  };
   const requestLyricsPlus = () => {
-    console.log("FAD Lyrics Plus: Checking Lyrics Plus app");
-    if (get("showLyrics") && checkLyricsPlus()) {
-      console.log("FAD Lyrics Plus: Requesting Lyrics Plus app2");
+    if (showLyrics && hasLyricsPlusApp()) {
       lastApp.current = Spicetify.Platform.History.location.pathname;
       if (lastApp.current !== getLyricsPlusPath()) {
         Spicetify.Platform.History.push(getLyricsPlusPath());
@@ -52,7 +49,7 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
   };
 
   useEffect(() => {
-    if (props.open) {
+    if (open) {
       requestLyricsPlus();
       return;
     }
@@ -61,36 +58,29 @@ export default function Lay2(props: { open: boolean; textColor: string }) {
       Spicetify.Platform.History.push(lastApp.current);
       window.dispatchEvent(new Event("fad-request"));
     }
-  }, [props.open, putMusic, showLyrics]);
+  }, [open, putMusic, showLyrics]);
+
+  const isHidden = verticalMode && putMusic === "center";
+  if (!open || !showLyrics || isHidden) return null;
+
+  const leftPosition =
+    putMusic === "left" ? "50%" : putMusic === "right" ? "0px" : "unset";
 
   return (
-    props.open &&
-    showLyrics &&
-    (verticalMode ? putMusic != "center" : true) && (
+    <div className={s.container} style={{ left: leftPosition }}>
       <div
-        className={s.container}
-        style={{
-          left:
-            putMusic == "left" ? "50%" : putMusic == "right" ? "0px" : "unset",
-        }}
-      >
-        <div
-          style={{
-            // @ts-ignore
+        style={
+          {
             "--color": "#fff",
-
-            // @ts-ignore
-            "--lyrics-color-active": props.textColor,
-            // @ts-ignore
-            "--lyrics-color-inactive": props.textColor + "50",
-
-            opacity: putMusic == "center" ? 0 : 1,
-            pointerEvents: putMusic == "center" ? "none" : "auto",
-          }}
-          id={getLyricsPlusID()}
-          data-fad-lyrics
-        ></div>
-      </div>
-    )
+            "--lyrics-color-active": textColor,
+            "--lyrics-color-inactive": `${textColor}50`,
+            opacity: putMusic === "center" ? 0 : 1,
+            pointerEvents: putMusic === "center" ? "none" : "auto",
+          } as CSSProperties
+        }
+        id={getLyricsPlusContainerId()}
+        data-fad-lyrics
+      />
+    </div>
   );
 }

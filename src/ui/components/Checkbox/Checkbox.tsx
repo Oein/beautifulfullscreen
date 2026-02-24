@@ -7,10 +7,14 @@ interface CheckboxProps {
   className?: string;
 }
 
-function Checkbox({ checked, onChange, label, className }: any) {
+export default function Checkbox({
+  checked,
+  onChange,
+  className,
+}: CheckboxProps) {
   const React = Spicetify.React;
   return (
-    <div className={`${styles.checkboxContainer} ${className || ""}`}>
+    <div className={`${styles.checkboxContainer} ${className ?? ""}`}>
       <label className={styles.checkboxLabel}>
         <input
           type="checkbox"
@@ -18,10 +22,8 @@ function Checkbox({ checked, onChange, label, className }: any) {
           onChange={onChange}
           className={styles.checkboxInput}
         />
-        <span className={styles.checkmark}></span>
+        <span className={styles.checkmark} />
       </label>
     </div>
   );
 }
-
-export default Checkbox;

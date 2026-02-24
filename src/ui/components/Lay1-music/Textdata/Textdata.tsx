@@ -1,166 +1,121 @@
-import { addChangeListener, get } from "../../../../lib/config";
+import { useConfigs } from "../../../../lib/useConfig";
+import { getDisplayTitle, getArtistName } from "../../../../lib/trackUtils";
 import DisplayIcon from "../DisplayIcon";
-
 import style from "./textdata.module.css";
 
+function computeFontSizes(
+  titleLength: number,
+  isLyricsMode: boolean,
+  titleSizeOverride: string,
+  artistSizeOverride: string,
+): [string, string] {
+  let titleSize: string;
+  let artistSize: string;
+
+  if (!isLyricsMode) {
+    if (titleLength > 45) {
+      titleSize = "50px";
+      artistSize = "26px";
+    } else if (titleLength > 35) {
+      titleSize = "60px";
+      artistSize = "29px";
+    } else if (titleLength > 30) {
+      titleSize = "70px";
+      artistSize = "32px";
+    } else {
+      titleSize = "87px";
+      artistSize = "32px";
+    }
+  } else {
+    if (titleLength > 30) {
+      titleSize = "35px";
+      artistSize = "20px";
+    } else if (titleLength > 20) {
+      titleSize = "40px";
+      artistSize = "28px";
+    } else {
+      titleSize = "54px";
+      artistSize = "31px";
+    }
+  }
+
+  if (titleSizeOverride !== "auto") titleSize = titleSizeOverride;
+  if (artistSizeOverride !== "auto") artistSize = artistSizeOverride;
+
+  return [titleSize, artistSize];
+}
+
 export default function TextData() {
-  const { React } = Spicetify;
+  const React = Spicetify.React;
   const { useState, useEffect } = React;
 
-  const [titleWeight, setTitleWeight] = useState(get("titleFontWeight"));
-  const [artistWeight, setArtistWeight] = useState(get("artistFontWeight"));
-  const [titleSize, setTitleSize] = useState(get("titleFontSize"));
-  const [artistSizeState, setArtistSize] = useState(get("artistFontSize"));
-  const [reverse, setReverse] = useState(get("reverseMusic"));
-  const [showLyrics, setShowLyrics] = useState(get("showLyrics"));
-  const [withLyricsSizedMusic, setWithLyricsSizedMusic] = useState(
-    get("withLyricsSizedMusic")
-  );
-  const [trimTitle, setTrimTitle] = useState(get("trimTitle"));
-  const [showAllArtists, setShowAllArtists] = useState(get("showAllArtists"));
-  const [verticalMode, setVerticalMode] = useState(get("verticalMode"));
+  const config = useConfigs([
+    "titleFontWeight",
+    "artistFontWeight",
+    "titleFontSize",
+    "artistFontSize",
+    "reverseMusic",
+    "showLyrics",
+    "withLyricsSizedMusic",
+    "trimTitle",
+    "showAllArtists",
+    "verticalMode",
+  ] as const);
 
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
 
   useEffect(() => {
-    const rm = [
-      addChangeListener("titleFontWeight", () =>
-        setTitleWeight(get("titleFontWeight"))
-      ),
-      addChangeListener("artistFontWeight", () =>
-        setArtistWeight(get("artistFontWeight"))
-      ),
-      addChangeListener("titleFontSize", () =>
-        setTitleSize(get("titleFontSize"))
-      ),
-      addChangeListener("artistFontSize", () =>
-        setArtistSize(get("artistFontSize"))
-      ),
-      addChangeListener("showLyrics", () => setShowLyrics(get("showLyrics"))),
-      addChangeListener("withLyricsSizedMusic", () =>
-        setWithLyricsSizedMusic(get("withLyricsSizedMusic"))
-      ),
-      addChangeListener("trimTitle", () => setTrimTitle(get("trimTitle"))),
-      addChangeListener("showAllArtists", () =>
-        setShowAllArtists(get("showAllArtists"))
-      ),
-      addChangeListener("verticalMode", () =>
-        setVerticalMode(get("verticalMode"))
-      ),
-      addChangeListener("reverseMusic", () => setReverse(get("reverseMusic"))),
-    ];
-
-    return () => rm.forEach((f) => f());
-  }, []);
-
-  const getTitleAndArtistSize = () => {
-    const titleText = title.length;
-    let size = "87px";
-    let artistSize = "32px";
-    if (!showLyrics && !withLyricsSizedMusic) {
-      if (titleText > 45) {
-        size = "50px";
-        artistSize = "26px";
-      } else if (titleText > 35) {
-        size = "60px";
-        artistSize = "29px";
-      } else if (titleText > 30) {
-        size = "70px";
-      }
-    } else {
-      size = "54px";
-      artistSize = "31px";
-      if (titleText > 30) {
-        size = "35px";
-        artistSize = "20px";
-      } else if (titleText > 20) {
-        size = "40px";
-        artistSize = "28px";
-      }
-    }
-
-    if (titleSize !== "auto") {
-      size = titleSize;
-    }
-    if (artistSizeState !== "auto") {
-      artistSize = artistSizeState;
-    }
-
-    return [size, artistSize];
-  };
-
-  useEffect(() => {
     const onTrackChange = () => {
       const data = Spicetify.Player.data;
       if (!data) return;
+
       const meta = data.item.metadata;
-
-      let title = meta.title;
-
-      if (trimTitle) {
-        title = title
-          .replace(/\(.+?\)/g, "")
-          .replace(/\[.+?\]/g, "")
-          .replace(/\s\-\s.+?$/, "")
-          .replace(/,.+?$/, "")
-          .trim();
-      }
-
-      setTitle(title);
-
-      let artistName: string;
-      if (showAllArtists) {
-        artistName = Object.keys(meta)
-          .filter((key) => key.startsWith("artist_name"))
-          .sort()
-          .map((key) => (meta as any)[key])
-          .join(", ");
-      } else {
-        artistName = meta.artist_name;
-      }
-      setArtist(artistName);
+      setTitle(getDisplayTitle(meta.title, config.trimTitle));
+      setArtist(
+        getArtistName(meta as Record<string, string>, config.showAllArtists),
+      );
     };
 
     onTrackChange();
     Spicetify.Player.addEventListener("songchange", onTrackChange);
     return () =>
       Spicetify.Player.removeEventListener("songchange", onTrackChange);
-  }, []);
+  }, [config.trimTitle, config.showAllArtists]);
+
+  const isLyricsMode = config.showLyrics || config.withLyricsSizedMusic;
+  const [titleFontSize, artistFontSize] = computeFontSizes(
+    title.length,
+    isLyricsMode,
+    config.titleFontSize,
+    config.artistFontSize,
+  );
+  const artistIconSize = parseInt(artistFontSize.replace("px", ""), 10);
 
   return (
     <>
-      {React.createElement("div", {
-        dangerouslySetInnerHTML: {
-          __html: title,
-        },
+      {Spicetify.React.createElement("div", {
+        dangerouslySetInnerHTML: { __html: title },
         className: style.title,
         style: {
-          fontSize: getTitleAndArtistSize()[0],
-          fontWeight: titleWeight,
+          fontSize: titleFontSize,
+          fontWeight: config.titleFontWeight,
         },
       })}
       <div
         className={style.artist}
-        style={{
-          fontSize: getTitleAndArtistSize()[1],
-          fontWeight: artistWeight,
-          paddingLeft: verticalMode ? "0" : undefined,
-          flexDirection: reverse ? "row-reverse" : "row",
-          // @ts-ignore
-          "--color": "currentColor",
-        }}
+        style={
+          {
+            fontSize: artistFontSize,
+            fontWeight: config.artistFontWeight,
+            paddingLeft: config.verticalMode ? "0" : undefined,
+            flexDirection: config.reverseMusic ? "row-reverse" : "row",
+            "--color": "currentColor",
+          } as React.CSSProperties
+        }
       >
-        <DisplayIcon
-          icon={Spicetify.SVGIcons.artist}
-          size={parseInt(getTitleAndArtistSize()[1].replace("px", ""))}
-        />
-        <span
-          className={style.artistSpan}
-          style={{
-            color: "currentColor",
-          }}
-        >
+        <DisplayIcon icon={Spicetify.SVGIcons.artist} size={artistIconSize} />
+        <span className={style.artistSpan} style={{ color: "currentColor" }}>
           {artist}
         </span>
       </div>

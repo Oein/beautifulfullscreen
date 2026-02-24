@@ -6,11 +6,11 @@ type RGB = {
 
 type Hex = string;
 
+/** Determines a readable text color (light or dark) for a given background RGB. */
 export default function bgrgb2fgcolor(rgb: RGB): Hex {
   const brightness = Math.round(
     (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
   );
-  // console.log("BRI", brightness);
   return brightness > 195 ? "#3D3D3D" : "#ffffff";
 }
 
