@@ -3,6 +3,7 @@
   top: 0px;
   width: 50dvw;
   height: 100dvh;
+  pointer-events: none;
 
   transition: var(--transition);
 }

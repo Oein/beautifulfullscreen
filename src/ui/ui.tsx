@@ -12,9 +12,9 @@ import ExternalSupport from "./lib/ExternalSupport";
 export default function UI() {
   const React = Spicetify.React;
   const { useEffect, useState, useRef } = React;
-  const ReactDOM = Spicetify.ReactDOM;
 
   const [open, setOpen] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
   const [color, setColor] = useState("#ffffff");
   const [pointerShown, setPointerShown] = useState(true);
   const pointerTimeout = useRef(null as number | null);
@@ -27,6 +27,7 @@ export default function UI() {
 
   useEffect(() => {
     if (open) document.documentElement.requestFullscreen();
+    if (!open) setConfigOpen(false);
   }, [open]);
 
   const handleDoubleClick = () => {
@@ -36,14 +37,7 @@ export default function UI() {
 
   const handleContextMenu: MouseEventHandler = (e) => {
     e.preventDefault();
-    const modalContainer = document.createElement("div");
-    ReactDOM.createRoot(modalContainer).render(
-      React.createElement(ConfigOverlay, {}),
-    );
-    Spicetify.PopupModal.display({
-      title: "Config",
-      content: modalContainer,
-    });
+    setConfigOpen((v) => !v);
   };
 
   const handlePointerMove = () => {
@@ -77,6 +71,22 @@ export default function UI() {
       <NextMusicLayer />
       <ClockLayer />
       <ExternalSupport open={open} />
+      {configOpen && (
+        <div
+          className={s.configModal}
+          onClick={(e) => e.stopPropagation()}
+          onDoubleClick={(e) => e.stopPropagation()}
+          onContextMenu={(e) => e.stopPropagation()}
+        >
+          <div className={s.configHeader}>
+            <span className={s.configTitle}>Config</span>
+            <button className={s.configClose} onClick={() => setConfigOpen(false)}>
+              ✕
+            </button>
+          </div>
+          <ConfigOverlay />
+        </div>
+      )}
     </div>
   );
 }

@@ -8,3 +8,57 @@
   width: 100dvw;
   height: 100dvh;
 }
+
+.configModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #282828;
+  border-radius: 8px;
+  padding: 24px;
+  width: 420px;
+  max-height: 70dvh;
+  overflow-y: auto;
+  z-index: 9999;
+  color: #fff;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  cursor: default;
+}
+
+.configModal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.configModal::-webkit-scrollbar-thumb {
+  background-color: #535353;
+  border-radius: 4px;
+}
+
+.configHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.configTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.configClose {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.configClose:hover {
+  color: #fff;
+  background-color: #ffffff1a;
+}
